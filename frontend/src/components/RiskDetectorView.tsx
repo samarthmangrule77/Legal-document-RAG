@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { 
   ShieldAlert, 
+  AlertOctagon, 
   AlertTriangle, 
   CheckCircle2, 
   FileText, 
   HelpCircle, 
   Sparkles,
   ArrowRight,
-  Filter
+  Filter,
+  ShieldCheck,
+  Zap,
+  Info
 } from 'lucide-react';
 import { LegalDocument, RiskItem } from '../types';
 
@@ -22,58 +26,102 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
   documents,
   onSelectDoc
 }) => {
-  const [filterSeverity, setFilterSeverity] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const [filterSeverity, setFilterSeverity] = useState<'all' | 'critical' | 'medium' | 'low'>('all');
   
   const doc = selectedDoc || documents[0];
-  const risks = doc?.risks || [];
+  
+  // Normalize risks and add default Red Flags if missing
+  const defaultRisks: RiskItem[] = [
+    {
+      id: 'rf-1',
+      category: 'unlimited_liability',
+      title: '🔴 Unlimited Liability & Broad Indemnification',
+      description: 'Clause 12.1 imposes uncapped financial liability on party without any aggregate monetary limit.',
+      severity: 'critical',
+      clause_ref: 'Section 12.1 (Indemnification)',
+      page_number: 8,
+      recommendation: 'Negotiate a liability cap equivalent to total 12 months fees paid under the contract.'
+    },
+    {
+      id: 'rf-2',
+      category: 'missing_termination',
+      title: '🟠 Missing Termination Notice Window & Auto-Renewal',
+      description: 'Contract automatically renews annually unless written cancellation is served within a 30-day window.',
+      severity: 'medium',
+      clause_ref: 'Section 4.2 (Term & Renewal)',
+      page_number: 3,
+      recommendation: 'Add a calendar reminder 90 days prior to renewal cutoff date.'
+    },
+    {
+      id: 'rf-3',
+      category: 'confidentiality',
+      title: '🟢 Standard Confidentiality Scope',
+      description: 'Customary non-disclosure and trade secret protections with standard 3-year term.',
+      severity: 'low',
+      clause_ref: 'Section 9.1 (Confidentiality)',
+      page_number: 5,
+      recommendation: 'Clause aligns with industry legal standards.'
+    }
+  ];
+
+  const rawRisks = doc?.risks && doc.risks.length > 0 ? doc.risks : defaultRisks;
+
+  // Format risk titles with emojis if not already prefixed
+  const risks: RiskItem[] = rawRisks.map(r => {
+    let sev: 'critical' | 'medium' | 'low' = (r.severity === 'high' ? 'critical' : r.severity) as any;
+    let title = r.title;
+    if (r.category === 'unlimited_liability' || r.title.toLowerCase().includes('unlimited')) {
+      sev = 'critical';
+      if (!title.includes('🔴')) title = `🔴 ${title.replace(/^(🔴|🟠|🟢)\s*/, '')}`;
+    } else if (r.category === 'auto_renewal' || r.category === 'missing_termination' || r.title.toLowerCase().includes('termination') || r.title.toLowerCase().includes('renewal')) {
+      sev = 'medium';
+      if (!title.includes('🟠')) title = `🟠 ${title.replace(/^(🔴|🟠|🟢)\s*/, '')}`;
+    } else if (r.category === 'confidentiality' || r.category === 'arbitration' || sev === 'low') {
+      sev = 'low';
+      if (!title.includes('🟢')) title = `🟢 ${title.replace(/^(🔴|🟠|🟢)\s*/, '')}`;
+    } else if (sev === 'critical') {
+      if (!title.includes('🔴')) title = `🔴 ${title}`;
+    } else if (sev === 'medium') {
+      if (!title.includes('🟠')) title = `🟠 ${title}`;
+    } else {
+      if (!title.includes('🟢')) title = `🟢 ${title}`;
+    }
+
+    return { ...r, severity: sev, title };
+  });
+
+  const criticalCount = risks.filter(r => r.severity === 'critical').length;
+  const mediumCount = risks.filter(r => r.severity === 'medium').length;
+  const lowCount = risks.filter(r => r.severity === 'low').length;
 
   const filteredRisks = filterSeverity === 'all' 
     ? risks 
     : risks.filter(r => r.severity === filterSeverity);
 
-  const getRiskColor = (score: number) => {
-    if (score >= 60) return { label: 'HIGH RISK', text: 'text-rose-500', bg: 'bg-rose-500', border: 'border-rose-500/30' };
-    if (score >= 35) return { label: 'MODERATE RISK', text: 'text-amber-500', bg: 'bg-amber-500', border: 'border-amber-500/30' };
-    return { label: 'LOW RISK', text: 'text-emerald-500', bg: 'bg-emerald-500', border: 'border-emerald-500/30' };
-  };
-
-  const riskInfo = getRiskColor(doc?.risk_score || 0);
-
-  const riskCategories = [
-    { key: 'unlimited_liability', label: 'Unlimited Liability' },
-    { key: 'high_penalties', label: 'High Penalties' },
-    { key: 'auto_renewal', label: 'Auto Renewal' },
-    { key: 'non_compete', label: 'Non-Compete' },
-    { key: 'arbitration', label: 'Arbitration' },
-    { key: 'confidentiality', label: 'Perpetual Confidentiality' },
-    { key: 'missing_signature', label: 'Missing Signatures' },
-    { key: 'missing_termination', label: 'Missing Termination' }
-  ];
-
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in pb-12">
       
-      {/* Header Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl glass-card border border-slate-200/80 dark:border-slate-800">
+      {/* Header Selector & Contract Picker */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm">
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-rose-500 uppercase tracking-wider">
-            <ShieldAlert className="w-4 h-4" />
-            <span>AI Legal Risk & Exposure Audit</span>
+            <AlertOctagon className="w-4 h-4 animate-pulse" />
+            <span>AI Red Flags & Risk Audit</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
             {doc?.filename || 'Select Contract'}
           </h1>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 font-semibold">Select Contract:</span>
+          <span className="text-xs text-slate-400 font-semibold">Contract Document:</span>
           <select
             value={doc?.id}
             onChange={(e) => {
               const found = documents.find(d => d.id === e.target.value);
               if (found) onSelectDoc(found);
             }}
-            className="px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-navy-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+            className="px-3.5 py-2 text-xs font-bold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
           >
             {documents.map((d) => (
               <option key={d.id} value={d.id}>{d.filename}</option>
@@ -82,156 +130,222 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
         </div>
       </div>
 
-      {/* Risk Score Gauge & Summary Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* AI Red Flags Overview Metric Cards (Critical 🔴 | Medium 🟠 | Low 🟢) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        {/* Risk Score Gauge Card */}
-        <div className="glass-card p-6 rounded-3xl space-y-4 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center text-center">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Contract Risk Score</div>
-          
-          <div className="relative w-36 h-36 flex items-center justify-center">
-            {/* SVG Meter Circular Gauge */}
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" className="text-slate-200 dark:text-slate-800" fill="transparent" />
-              <circle
-                cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8"
-                strokeDasharray={`${2.51 * (doc?.risk_score || 0)} 251`}
-                strokeLinecap="round"
-                className={`${riskInfo.text} transition-all duration-1000`}
-                fill="transparent"
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{doc?.risk_score || 0}</span>
-              <span className="text-[10px] text-slate-400 font-mono">OUT OF 100</span>
+        {/* Card 1: Critical Red Flags 🔴 */}
+        <div className="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent border-2 border-rose-500/30 dark:border-rose-500/40 shadow-lg shadow-rose-500/5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+              Critical Red Flags
+            </span>
+            <span className="text-2xl">🔴</span>
+          </div>
+
+          <div className="my-4">
+            <div className="text-4xl font-black text-rose-600 dark:text-rose-400">
+              {criticalCount}
+            </div>
+            <div className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1">
+              High Legal Exposure & Unlimited Liability
             </div>
           </div>
 
-          <div className={`px-4 py-1.5 rounded-full text-xs font-extrabold border ${riskInfo.border} ${riskInfo.text} bg-slate-50 dark:bg-navy-900`}>
-            {riskInfo.label}
-          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            Requires immediate legal negotiation prior to contract signature.
+          </p>
         </div>
 
-        {/* Risk Category Scan Status */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl space-y-4 border border-slate-200/80 dark:border-slate-800">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center justify-between">
-            <span>Automated 8-Point Risk Scan Matrix</span>
-            <span className="text-xs text-slate-400 font-normal">{risks.length} Risk Flag(s) Identified</span>
-          </h2>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {riskCategories.map((cat) => {
-              const matched = risks.some(r => r.category === cat.key);
-              return (
-                <div
-                  key={cat.key}
-                  className={`p-3 rounded-2xl border text-xs font-semibold space-y-1 ${
-                    matched
-                      ? 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'
-                      : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{cat.label}</span>
-                    {matched ? <AlertTriangle className="w-3.5 h-3.5 text-rose-500" /> : <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />}
-                  </div>
-                  <div className="text-[10px] font-mono opacity-80">
-                    {matched ? 'FLAGGED' : 'CLEAR'}
-                  </div>
-                </div>
-              );
-            })}
+        {/* Card 2: Medium Red Flags 🟠 */}
+        <div className="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-500/30 dark:border-amber-500/40 shadow-lg shadow-amber-500/5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              Medium Red Flags
+            </span>
+            <span className="text-2xl">🟠</span>
           </div>
+
+          <div className="my-4">
+            <div className="text-4xl font-black text-amber-600 dark:text-amber-400">
+              {mediumCount}
+            </div>
+            <div className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1">
+              Missing Termination & Auto-Renewal Windows
+            </div>
+          </div>
+
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            Operational risks requiring calendar tracking or clause amendments.
+          </p>
+        </div>
+
+        {/* Card 3: Low Risk / Compliant Clauses 🟢 */}
+        <div className="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border-2 border-emerald-500/30 dark:border-emerald-500/40 shadow-lg shadow-emerald-500/5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              Low Risk / Compliant
+            </span>
+            <span className="text-2xl">🟢</span>
+          </div>
+
+          <div className="my-4">
+            <div className="text-4xl font-black text-emerald-600 dark:text-emerald-400">
+              {lowCount}
+            </div>
+            <div className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1">
+              Standard Confidentiality & Dispute Scope
+            </div>
+          </div>
+
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            Standard boilerplate clauses complying with standard legal framework.
+          </p>
         </div>
 
       </div>
 
-      {/* Flagged Risks Details */}
-      <div className="glass-card p-6 rounded-3xl space-y-6 border border-slate-200/80 dark:border-slate-800">
+      {/* Filter Tabs & Red Flags List Section */}
+      <div className="space-y-6">
         
-        {/* Severity Filter */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-            Identified Risk Findings & Mitigation Advice
-          </h2>
+          <div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-rose-500" />
+              <span>AI Red Flags Breakdown ({filteredRisks.length})</span>
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Review flagged clauses, page references, and AI recommendations.
+            </p>
+          </div>
 
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-slate-400" />
-            <span className="text-xs font-semibold text-slate-400">Severity Filter:</span>
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-navy-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
-              {(['all', 'high', 'medium', 'low'] as const).map((sev) => (
-                <button
-                  key={sev}
-                  onClick={() => setFilterSeverity(sev)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold capitalize transition-all ${
-                    filterSeverity === sev
-                      ? 'bg-brand-600 text-white shadow-sm'
-                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                  }`}
-                >
-                  {sev}
-                </button>
-              ))}
-            </div>
+          {/* Color-Coded Filter Pill Buttons */}
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <button
+              onClick={() => setFilterSeverity('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+                filterSeverity === 'all'
+                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              All Red Flags ({risks.length})
+            </button>
+            <button
+              onClick={() => setFilterSeverity('critical')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+                filterSeverity === 'critical'
+                  ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20'
+                  : 'text-rose-600 dark:text-rose-400 hover:bg-rose-500/10'
+              }`}
+            >
+              <span>🔴 Critical</span>
+              <span>({criticalCount})</span>
+            </button>
+            <button
+              onClick={() => setFilterSeverity('medium')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+                filterSeverity === 'medium'
+                  ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20'
+                  : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10'
+              }`}
+            >
+              <span>🟠 Medium</span>
+              <span>({mediumCount})</span>
+            </button>
+            <button
+              onClick={() => setFilterSeverity('low')}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+                filterSeverity === 'low'
+                  ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                  : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10'
+              }`}
+            >
+              <span>🟢 Low</span>
+              <span>({lowCount})</span>
+            </button>
           </div>
         </div>
 
-        {/* Risk Items */}
+        {/* Detailed Red Flag Cards Grid */}
         <div className="space-y-4">
-          {filteredRisks.map((risk) => (
-            <div
-              key={risk.id}
-              className="p-5 rounded-2xl bg-slate-50 dark:bg-navy-900/50 border border-slate-200/60 dark:border-slate-800 space-y-3"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <AlertTriangle className={`w-5 h-5 ${risk.severity === 'high' ? 'text-rose-500' : 'text-amber-500'}`} />
-                  <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base">{risk.title}</h3>
-                </div>
+          {filteredRisks.length === 0 ? (
+            <div className="p-12 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-400 space-y-2">
+              <ShieldCheck className="w-10 h-10 text-emerald-500 mx-auto" />
+              <div className="text-sm font-extrabold text-slate-700 dark:text-slate-200">No Red Flags Found for Selected Filter</div>
+              <div className="text-xs text-slate-400">Try selecting "All Red Flags" to view full legal audit.</div>
+            </div>
+          ) : (
+            filteredRisks.map((item) => {
+              const isCritical = item.severity === 'critical';
+              const isMedium = item.severity === 'medium';
+              const isLow = item.severity === 'low';
 
-                <div className="flex items-center gap-2">
-                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold ${
-                    risk.severity === 'high' ? 'bg-rose-500/15 text-rose-600' : 'bg-amber-500/15 text-amber-600'
-                  }`}>
-                    {risk.severity.toUpperCase()} SEVERITY
-                  </span>
-                  {risk.page_number && (
-                    <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono text-[11px] text-slate-600 dark:text-slate-300">
-                      Page {risk.page_number}
+              return (
+                <div
+                  key={item.id}
+                  className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border-l-4 shadow-sm transition-all hover:shadow-md space-y-4 ${
+                    isCritical
+                      ? 'border-l-rose-500 border-slate-200/80 dark:border-slate-800'
+                      : isMedium
+                      ? 'border-l-amber-500 border-slate-200/80 dark:border-slate-800'
+                      : 'border-l-emerald-500 border-slate-200/80 dark:border-slate-800'
+                  }`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                        {item.title}
+                      </h3>
+                    </div>
+
+                    <span className={`px-3 py-1 rounded-full text-xs font-black self-start sm:self-auto border ${
+                      isCritical
+                        ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                        : isMedium
+                        ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                        : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                    }`}>
+                      {isCritical ? '🔴 CRITICAL RED FLAG' : isMedium ? '🟠 MEDIUM RED FLAG' : '🟢 LOW RISK / COMPLIANT'}
                     </span>
-                  )}
+                  </div>
+
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                    {item.description}
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500 dark:text-slate-400">
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                      📍 {item.clause_ref || 'Clause Reference'}
+                    </span>
+                    {item.page_number && (
+                      <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        📄 Page {item.page_number}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* AI Recommendation Box */}
+                  <div className={`p-4 rounded-2xl border text-xs space-y-1 ${
+                    isCritical
+                      ? 'bg-rose-500/5 border-rose-500/20 text-rose-900 dark:text-rose-200'
+                      : isMedium
+                      ? 'bg-amber-500/5 border-amber-500/20 text-amber-900 dark:text-amber-200'
+                      : 'bg-emerald-500/5 border-emerald-500/20 text-emerald-900 dark:text-emerald-200'
+                  }`}>
+                    <div className="font-extrabold flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      AI Legal Action Recommendation:
+                    </div>
+                    <p className="leading-relaxed">{item.recommendation}</p>
+                  </div>
                 </div>
-              </div>
-
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
-                {risk.description}
-              </p>
-
-              {risk.clause_ref && (
-                <div className="text-xs font-mono text-brand-600 dark:text-brand-400">
-                  Target Location: {risk.clause_ref}
-                </div>
-              )}
-
-              {/* Recommendation Box */}
-              <div className="p-3.5 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs space-y-1">
-                <div className="font-bold text-brand-700 dark:text-brand-300 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Legal Mitigation Recommendation:
-                </div>
-                <p className="text-slate-700 dark:text-slate-300">{risk.recommendation}</p>
-              </div>
-
-            </div>
-          ))}
-
-          {filteredRisks.length === 0 && (
-            <div className="p-8 text-center text-slate-400 text-xs">
-              No risk findings match the selected filter severity.
-            </div>
+              );
+            })
           )}
         </div>
-
       </div>
 
     </div>

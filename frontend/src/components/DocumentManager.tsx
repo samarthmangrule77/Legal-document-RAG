@@ -21,29 +21,42 @@ interface DocumentManagerProps {
   onUpload: (file: File) => Promise<LegalDocument>;
   onSelectDoc: (doc: LegalDocument) => void;
   setActiveTab: (tab: NavTab) => void;
+  planId?: 'free' | 'pro' | 'enterprise';
 }
 
 export const DocumentManager: React.FC<DocumentManagerProps> = ({
   documents,
   onUpload,
   onSelectDoc,
-  setActiveTab
+  setActiveTab,
+  planId = 'free'
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState<string>('');
   const [selectedPreviewDoc, setSelectedPreviewDoc] = useState<LegalDocument | null>(null);
+  const [quotaErrorModal, setQuotaErrorModal] = useState<boolean>(false);
+
+  const isQuotaReached = planId === 'free' && documents.length >= 5;
 
   const handleFileDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+    if (isQuotaReached) {
+      setQuotaErrorModal(true);
+      return;
+    }
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       await processUpload(e.dataTransfer.files[0]);
     }
   };
 
   const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isQuotaReached) {
+      setQuotaErrorModal(true);
+      return;
+    }
     if (e.target.files && e.target.files[0]) {
       await processUpload(e.target.files[0]);
     }
@@ -72,21 +85,54 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
     }, 1600);
 
     setTimeout(async () => {
-      setUploadProgress(95);
-      setCurrentStep('4/4 Indexing vectors into FAISS Vector Database...');
-      const created = await onUpload(file);
-      setUploadProgress(100);
-      setTimeout(() => {
+      try {
+        setUploadProgress(95);
+        setCurrentStep('4/4 Indexing vectors into FAISS Vector Database...');
+        const created = await onUpload(file);
+        setUploadProgress(100);
+        setTimeout(() => {
+          setIsUploading(false);
+          setUploadProgress(0);
+          setCurrentStep('');
+          onSelectDoc(created);
+        }, 500);
+      } catch (err: any) {
         setIsUploading(false);
         setUploadProgress(0);
         setCurrentStep('');
-        onSelectDoc(created);
-      }, 500);
+        setQuotaErrorModal(true);
+      }
     }, 2400);
   };
 
   return (
     <div className="space-y-8 animate-fade-in">
+
+      {/* Free Plan Quota Reached Banner */}
+      {isQuotaReached && (
+        <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-brand-500/15 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <AlertCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                Free Plan Quota Limit Reached (5/5 PDFs Used)
+              </h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                Your workspace has hit the maximum 5 PDF limit on the Free tier. Upgrade to Pro for unlimited document uploads and priority OCR indexing.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveTab('billing')}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-brand-500/25 transition-all flex-shrink-0"
+          >
+            <span>Upgrade to Pro</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -301,11 +347,45 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
                     </span>
                   </div>
                   <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{risk.description}</p>
-                  <div className="text-[11px] font-mono text-brand-600 dark:text-brand-400">Ref: {risk.clause_ref} (Page {risk.page_number})</div>
                 </div>
               ))}
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Quota Exceeded Modal */}
+      {quotaErrorModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 space-y-5 border border-slate-200 dark:border-slate-800 shadow-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 text-rose-500 flex items-center justify-center">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">Free Plan Limit Reached</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                Free Plan is capped at 5 PDFs. You currently have <span className="font-bold text-slate-800 dark:text-slate-200">{documents.length} PDFs</span> indexed. Upgrade to Pro for unlimited document uploads.
+              </p>
+            </div>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                onClick={() => setQuotaErrorModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setQuotaErrorModal(false);
+                  setActiveTab('billing');
+                }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-brand-500/25"
+              >
+                <span>Upgrade to Pro</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       )}

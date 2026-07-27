@@ -256,6 +256,8 @@ export const INITIAL_CONVERSATIONS: Conversation[] = [
       {
         id: 'm-2',
         sender: 'ai',
+        summary: 'According to Clause 10.1 of the Employment Agreement, either party may terminate by providing at least 30 days prior written notice.',
+        reasoning: '1. Vector Embeddings Search -> Matched Clause 10.1 in FAISS index with 96% cosine similarity score.\n2. Contract Clause Verification -> Cross-referenced Page 9 Section 10.1 (Termination Procedures).\n3. Legal Deduction -> Verified 30 calendar days notice requirement without penalty.',
         text: 'According to **Clause 10.1 (Termination Procedures)** on **Page 9** of the *Senior Software Engineer Employment Agreement*, either party may terminate the agreement by providing at least **30 days prior written notice**.',
         timestamp: '11:21 AM',
         confidence_level: 'High',
@@ -268,6 +270,16 @@ export const INITIAL_CONVERSATIONS: Conversation[] = [
             snippet: 'Either party may terminate this Agreement without cause upon giving thirty (30) calendar days advance written notice.',
             confidence: 0.96
           }
+        ],
+        related_clauses: [
+          'Clause 10.1 (Termination Procedures)',
+          'Clause 10.2 (Immediate Termination for Cause)',
+          'Clause 8.2 (Non-Compete Restrictions)'
+        ],
+        follow_up_questions: [
+          'What happens if termination occurs during the probation period?',
+          'What remedies apply if 30 days notice is not provided?',
+          'Are there any severance pay entitlements upon termination?'
         ]
       }
     ]

@@ -11,12 +11,31 @@ import {
   BarChart3,
   UploadCloud,
   Building2,
-  Users
+  Users,
+  CreditCard,
+  FileSignature,
+  GitFork,
+  History,
+  Zap,
+  ShieldCheck,
+  Brain,
+  Settings,
+  Code2,
+  Bot
 } from 'lucide-react';
 
 export type NavTab = 
   | 'dashboard' 
+  | 'agent'
   | 'org'
+  | 'generator'
+  | 'workflows'
+  | 'graph'
+  | 'versioning'
+  | 'memory'
+  | 'audit'
+  | 'developer'
+  | 'settings'
   | 'documents' 
   | 'chat' 
   | 'summary' 
@@ -24,7 +43,8 @@ export type NavTab =
   | 'compare' 
   | 'search' 
   | 'timeline' 
-  | 'admin';
+  | 'admin'
+  | 'billing';
 
 interface SidebarProps {
   activeTab: NavTab;
@@ -32,6 +52,7 @@ interface SidebarProps {
   documentCount: number;
   highRiskCount: number;
   activeOrgName: string;
+  planName?: string;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -39,11 +60,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setActiveTab,
   documentCount,
   highRiskCount,
-  activeOrgName
+  activeOrgName,
+  planName = 'Free Plan'
 }) => {
   const navItems = [
     { id: 'dashboard' as NavTab, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'agent' as NavTab, label: 'Autonomous AI Agent', icon: Bot, alert: 'Agent 🤖' },
+    { id: 'generator' as NavTab, label: 'AI Contract Generator', icon: FileSignature, alert: 'New ✨' },
+    { id: 'workflows' as NavTab, label: 'AI Workflow Builder', icon: Zap, alert: 'Automate ⚡' },
+    { id: 'memory' as NavTab, label: 'AI Memory & Rules', icon: Brain, alert: 'Context 🧠' },
+    { id: 'graph' as NavTab, label: 'Interactive Clause Graph', icon: GitFork, alert: 'Visual 🕸️' },
+    { id: 'versioning' as NavTab, label: 'Version Control & Diff', icon: History, alert: 'Redline 📜' },
+    { id: 'developer' as NavTab, label: 'Public REST API & SDKs', icon: Code2, alert: 'API 🔌' },
+    { id: 'settings' as NavTab, label: 'Enterprise Settings', icon: Settings, alert: 'Config ⚙️' },
+    { id: 'audit' as NavTab, label: 'Enterprise Audit Logs', icon: ShieldCheck, alert: 'Audit 📋' },
     { id: 'org' as NavTab, label: 'Organizations & RBAC', icon: Building2, highlight: true },
+    { id: 'billing' as NavTab, label: 'Billing & Plans', icon: CreditCard, alert: planName === 'Free Plan' ? 'Free (5 PDFs)' : 'Pro' },
     { id: 'documents' as NavTab, label: 'Upload & Documents', icon: UploadCloud, badge: documentCount },
     { id: 'chat' as NavTab, label: 'AI RAG Chat', icon: MessageSquare },
     { id: 'summary' as NavTab, label: 'Contract Summary', icon: FileCheck2 },

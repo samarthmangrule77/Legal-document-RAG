@@ -1,7 +1,8 @@
-import React from 'react';
-import { Scale, Moon, Sun, ShieldAlert, Sparkles, User as UserIcon, LogOut, Search } from 'lucide-react';
+import React, { useState } from 'react';
+import { Scale, Moon, Sun, ShieldAlert, Sparkles, User as UserIcon, LogOut, Search, Bell } from 'lucide-react';
 import { User, Organization } from '../types';
 import { OrgSwitcher } from './OrgSwitcher';
+import { NotificationEvent } from './NotificationToastContainer';
 
 interface NavbarProps {
   darkMode: boolean;
@@ -18,6 +19,9 @@ interface NavbarProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onQuickSearch: () => void;
+  notifications?: NotificationEvent[];
+  unreadCount?: number;
+  onClearNotifications?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -34,8 +38,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogout,
   searchQuery,
   setSearchQuery,
-  onQuickSearch
+  onQuickSearch,
+  notifications = [],
+  unreadCount = 0,
+  onClearNotifications
 }) => {
+  const [showNotificationFeed, setShowNotificationFeed] = useState(false);
+
   return (
     <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -91,6 +100,62 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="hidden xl:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
             <ShieldAlert className="w-3.5 h-3.5" />
             <span>Isolated Tenant Vault</span>
+          </div>
+
+          {/* Real-Time WebSocket Notification Bell */}
+          <div className="relative">
+            <button
+              onClick={() => setShowNotificationFeed(!showNotificationFeed)}
+              className="relative p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60 transition-colors"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white font-bold text-[9px] flex items-center justify-center animate-bounce shadow">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+
+            {/* Notification Dropdown Feed */}
+            {showNotificationFeed && (
+              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                  <span className="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+                    Real-Time Activity Feed
+                  </span>
+                  {notifications.length > 0 && (
+                    <button
+                      onClick={() => {
+                        if (onClearNotifications) onClearNotifications();
+                        setShowNotificationFeed(false);
+                      }}
+                      className="text-[10px] text-brand-600 dark:text-brand-400 font-semibold hover:underline"
+                    >
+                      Clear All
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-slate-400">
+                      No real-time events yet. Upload a document to see live processing!
+                    </div>
+                  ) : (
+                    notifications.map((n) => (
+                      <div key={n.id} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 space-y-0.5">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-slate-800 dark:text-slate-200">
+                          <span>{n.title}</span>
+                          <span className="text-[9px] font-mono text-slate-400">{n.timestamp}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{n.message}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Theme Switcher */}

@@ -11,7 +11,12 @@ import {
   CheckCircle2, 
   AlertTriangle,
   GitCompare,
-  Calendar
+  Calendar,
+  AlertOctagon,
+  HelpCircle,
+  Zap,
+  TrendingUp,
+  FileSignature
 } from 'lucide-react';
 import { LegalDocument, Conversation } from '../types';
 import { NavTab } from './Sidebar';
@@ -33,253 +38,296 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const avgRisk = Math.round(documents.reduce((acc, doc) => acc + doc.risk_score, 0) / (documents.length || 1));
   const highRiskCount = documents.filter(d => d.risk_score >= 60).length;
 
+  const mostAskedQuestions = [
+    "What is the required notice period for termination?",
+    "Does this agreement contain uncapped indemnification liability?",
+    "What are the auto-renewal cancellation window deadlines?",
+    "Who owns intellectual property created during employment?"
+  ];
+
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in pb-12">
       
       {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-900 via-indigo-950 to-navy-950 p-6 sm:p-8 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-navy-950 p-8 text-white shadow-2xl border border-slate-800">
         <div className="absolute right-0 top-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-brand-500/20 blur-3xl pointer-events-none"></div>
         <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-brand-300 text-xs font-semibold border border-white/10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-brand-300 text-xs font-bold border border-white/15">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>AI RAG Engine Ready & Operational</span>
+            <span>AI Executive Command Center Operational</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-            Legal Document Intelligence & RAG Workspace
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
+            Legal Intelligence & Risk Operations Dashboard
           </h1>
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Upload contracts, analyze clauses, detect high-risk commitments, and get instant grounded answers backed by precise page & clause citations.
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium">
+            Monitor real-time legal risks, upcoming contract renewals, pending reviews, and prompt your contract vector store in plain English.
           </p>
           
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
-              onClick={() => setActiveTab('documents')}
-              className="px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-semibold text-sm shadow-md transition-all flex items-center gap-2"
+              onClick={() => setActiveTab('generator')}
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-brand-500 to-indigo-600 hover:from-brand-400 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-brand-500/25 transition-all flex items-center gap-2"
             >
-              <FileText className="w-4 h-4" />
-              <span>Upload New Contract</span>
+              <FileSignature className="w-4 h-4" />
+              <span>Draft AI Contract ✨</span>
             </button>
+
             <button
               onClick={() => setActiveTab('chat')}
-              className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-md border border-white/20 transition-all flex items-center gap-2"
+              className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-extrabold text-xs backdrop-blur-md border border-white/20 transition-all flex items-center gap-2"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Ask Questions</span>
+              <span>Ask RAG Assistant →</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Metrics Row */}
+      {/* Top Smart Executive Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        {/* Metric 1 */}
-        <div className="glass-card p-5 rounded-2xl space-y-2 border border-slate-200/80 dark:border-slate-800">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
-            <span className="text-xs font-bold uppercase tracking-wider">Processed Contracts</span>
-            <div className="p-2 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400">
-              <FileText className="w-4 h-4" />
+        {/* Card 1: Today's Activity */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-xs font-extrabold uppercase tracking-wider">Today's Activity</span>
+            <div className="p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            {documents.length}
+          <div className="text-3xl font-black text-slate-900 dark:text-white">
+            8 Actions
           </div>
-          <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+          <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>100% Extracted & Indexed</span>
+            <span>3 Uploads • 5 RAG Queries</span>
           </div>
         </div>
 
-        {/* Metric 2 */}
-        <div className="glass-card p-5 rounded-2xl space-y-2 border border-slate-200/80 dark:border-slate-800">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
-            <span className="text-xs font-bold uppercase tracking-wider">Vector Chunks</span>
-            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-              <Layers className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            {totalChunks}
-          </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-            Stored in FAISS Vector DB
-          </div>
-        </div>
-
-        {/* Metric 3 */}
-        <div className="glass-card p-5 rounded-2xl space-y-2 border border-slate-200/80 dark:border-slate-800">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
-            <span className="text-xs font-bold uppercase tracking-wider">Average Risk Score</span>
+        {/* Card 2: Pending Reviews */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-xs font-extrabold uppercase tracking-wider">Pending Legal Reviews</span>
             <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <ShieldAlert className="w-4 h-4" />
+              <Clock className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 dark:text-white flex items-baseline gap-2">
-            <span>{avgRisk} / 100</span>
-            <span className={`text-xs px-2 py-0.5 rounded font-semibold ${
-              avgRisk >= 60 ? 'bg-rose-500/10 text-rose-600' : 'bg-emerald-500/10 text-emerald-600'
-            }`}>
-              {avgRisk >= 60 ? 'High' : 'Moderate'}
-            </span>
+          <div className="text-3xl font-black text-amber-600 dark:text-amber-400">
+            3 Contracts
           </div>
-          <div className="text-xs text-rose-500 font-medium flex items-center gap-1">
-            <AlertTriangle className="w-3.5 h-3.5" />
-            <span>{highRiskCount} Contract(s) Need Review</span>
+          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            Awaiting Legal Sign-off
           </div>
         </div>
 
-        {/* Metric 4 */}
-        <div className="glass-card p-5 rounded-2xl space-y-2 border border-slate-200/80 dark:border-slate-800">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
-            <span className="text-xs font-bold uppercase tracking-wider">Storage & Vault</span>
-            <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
-              <Database className="w-4 h-4" />
+        {/* Card 3: Upcoming Renewals */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-xs font-extrabold uppercase tracking-wider">Upcoming Renewals</span>
+            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+              <Calendar className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            8.3 MB
+          <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400">
+            2 Deadlines
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-            256-Bit Encrypted Storage
+            Within Next 90 Days
+          </div>
+        </div>
+
+        {/* Card 4: High Risk Contracts */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-xs font-extrabold uppercase tracking-wider">High Risk Contracts</span>
+            <div className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+              <AlertOctagon className="w-4 h-4 animate-pulse" />
+            </div>
+          </div>
+          <div className="text-3xl font-black text-rose-600 dark:text-rose-400">
+            {highRiskCount} Flagged
+          </div>
+          <div className="text-xs text-rose-500 font-bold flex items-center gap-1">
+            <AlertTriangle className="w-3.5 h-3.5" />
+            <span>Critical Red Flags Found</span>
           </div>
         </div>
 
       </div>
 
-      {/* Main Grid Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Content Grid (8 cols & 4 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* Active Documents List (2 cols) */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl space-y-4 border border-slate-200/80 dark:border-slate-800">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <FileText className="w-5 h-5 text-brand-500" />
-              <span>Active Uploaded Contracts</span>
-            </h2>
-            <button
-              onClick={() => setActiveTab('documents')}
-              className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
-            >
-              <span>View All</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {documents.map((doc) => (
-              <div
-                key={doc.id}
-                onClick={() => {
-                  setSelectedDoc(doc);
-                  setActiveTab('summary');
-                }}
-                className="p-4 rounded-2xl bg-slate-50 dark:bg-navy-900/50 hover:bg-slate-100 dark:hover:bg-navy-900 border border-slate-200/60 dark:border-slate-800 transition-all cursor-pointer flex items-center justify-between group"
-              >
-                <div className="flex items-center gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-xs uppercase">
-                    {doc.file_type}
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
-                      {doc.filename}
-                    </h3>
-                    <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
-                      <span>{doc.file_size}</span>
-                      <span>•</span>
-                      <span>{doc.chunk_count} chunks</span>
-                      <span>•</span>
-                      <span>Uploaded {doc.upload_date}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
-                    doc.risk_score >= 60
-                      ? 'bg-rose-500/10 text-rose-600 border-rose-500/20'
-                      : doc.risk_score >= 35
-                      ? 'bg-amber-500/10 text-amber-600 border-amber-500/20'
-                      : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
-                  }`}>
-                    Risk: {doc.risk_score}/100
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Launchers & Recent Conversations (1 col) */}
-        <div className="space-y-6">
+        {/* Left Column: High Risk & Recently Uploaded Contracts (8 cols) */}
+        <div className="lg:col-span-8 space-y-8">
           
-          {/* Quick Workflows */}
-          <div className="glass-card p-6 rounded-3xl space-y-4 border border-slate-200/80 dark:border-slate-800">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
-              AI Tools & Workflows
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              
-              <button
-                onClick={() => setActiveTab('summary')}
-                className="p-3.5 rounded-2xl bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/20 text-left space-y-1.5 transition-all group"
-              >
-                <FileText className="w-5 h-5 text-brand-600 dark:text-brand-400" />
-                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">Contract Summary</div>
-                <div className="text-[10px] text-slate-500">Executive breakdown</div>
-              </button>
+          {/* Section: High Risk Contracts Needing Attention */}
+          <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border-2 border-rose-500/30 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <AlertOctagon className="w-5 h-5 text-rose-500" />
+                  <span>High Risk Contracts Requiring Action</span>
+                </h2>
+                <p className="text-xs text-slate-500">Agreements containing uncapped liability or broad restrictive covenants.</p>
+              </div>
 
               <button
                 onClick={() => setActiveTab('risks')}
-                className="p-3.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-left space-y-1.5 transition-all group"
+                className="px-3.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-extrabold border border-rose-500/20 transition-all"
               >
-                <ShieldAlert className="w-5 h-5 text-rose-600 dark:text-rose-400" />
-                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">Risk Audit</div>
-                <div className="text-[10px] text-slate-500">Clause scanner</div>
+                Full Risk Audit →
               </button>
+            </div>
 
-              <button
-                onClick={() => setActiveTab('compare')}
-                className="p-3.5 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-left space-y-1.5 transition-all group"
-              >
-                <GitCompare className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">Compare Docs</div>
-                <div className="text-[10px] text-slate-500">Side-by-side diff</div>
-              </button>
+            <div className="space-y-3">
+              {documents.filter(d => d.risk_score >= 60).map((doc) => (
+                <div
+                  key={doc.id}
+                  onClick={() => {
+                    setSelectedDoc(doc);
+                    setActiveTab('risks');
+                  }}
+                  className="p-5 rounded-2xl bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 transition-all cursor-pointer flex items-center justify-between group"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-2xl">🔴</span>
+                    <div>
+                      <h3 className="text-sm font-black text-slate-900 dark:text-white group-hover:text-rose-600 transition-colors">
+                        {doc.filename}
+                      </h3>
+                      <div className="text-xs text-rose-600 dark:text-rose-400 font-semibold mt-0.5">
+                        Flagged: Broad Indemnification & 24-Month Non-Compete
+                      </div>
+                    </div>
+                  </div>
 
-              <button
-                onClick={() => setActiveTab('timeline')}
-                className="p-3.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-left space-y-1.5 transition-all group"
-              >
-                <Calendar className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                <div className="text-xs font-bold text-slate-800 dark:text-slate-200">AI Timeline</div>
-                <div className="text-[10px] text-slate-500">Deadlines & dates</div>
-              </button>
-
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 rounded-full bg-rose-500 text-white text-xs font-black">
+                      Risk Score: {doc.risk_score}/100
+                    </span>
+                    <ArrowRight className="w-4 h-4 text-rose-500 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Recent Conversations */}
-          <div className="glass-card p-6 rounded-3xl space-y-4 border border-slate-200/80 dark:border-slate-800">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-brand-500" />
-              <span>Recent AI Chats</span>
-            </h2>
+          {/* Section: Recently Uploaded Documents Table */}
+          <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <FileText className="w-5 h-5 text-brand-500" />
+                <span>Recently Uploaded Contracts</span>
+              </h2>
+
+              <button
+                onClick={() => setActiveTab('documents')}
+                className="text-xs font-extrabold text-brand-600 dark:text-brand-400 hover:underline"
+              >
+                View All Contracts ({documents.length}) →
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 font-extrabold uppercase tracking-wider">
+                    <th className="pb-3 px-3">Contract Document</th>
+                    <th className="pb-3 px-3">Upload Date</th>
+                    <th className="pb-3 px-3">RAG Status</th>
+                    <th className="pb-3 px-3">Risk Level</th>
+                    <th className="pb-3 px-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                  {documents.map((doc) => (
+                    <tr key={doc.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="py-4 px-3 font-bold text-slate-900 dark:text-white">
+                        {doc.filename}
+                      </td>
+                      <td className="py-4 px-3 text-slate-400 font-mono">
+                        {doc.upload_date}
+                      </td>
+                      <td className="py-4 px-3">
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold border border-emerald-500/30">
+                          Indexed ({doc.chunk_count} chunks)
+                        </span>
+                      </td>
+                      <td className="py-4 px-3">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border ${
+                          doc.risk_score >= 60 ? 'bg-rose-500/15 text-rose-600 border-rose-500/30' : 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30'
+                        }`}>
+                          {doc.risk_score >= 60 ? '🔴 High Risk' : '🟢 Low Risk'}
+                        </span>
+                      </td>
+                      <td className="py-4 px-3 text-right">
+                        <button
+                          onClick={() => {
+                            setSelectedDoc(doc);
+                            setActiveTab('chat');
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 font-extrabold text-xs transition-colors"
+                        >
+                          Ask RAG →
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Column: AI Smart Suggestions & Most Asked Questions (4 cols) */}
+        <div className="lg:col-span-4 space-y-8">
+          
+          {/* AI Smart Proactive Suggestions Card */}
+          <div className="p-6 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-brand-500/5 to-transparent border-2 border-brand-500/30 shadow-sm space-y-4">
+            <div className="flex items-center gap-2 text-xs font-extrabold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
+              <Zap className="w-4 h-4" />
+              <span>AI Smart Proactive Suggestions</span>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs">
+                <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <span>📅 Auto-Renewal Notice Window (60 Days)</span>
+                </div>
+                <p className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                  Commercial Lease Agreement auto-renews on April 1, 2027. Schedule non-renewal notice review.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs">
+                <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <span>🔴 Negotiate Indemnification Cap</span>
+                </div>
+                <p className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                  Employment Agreement Clause 12.1 lacks monetary cap. Request 12-month salary liability limit.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Most Asked Questions Chips */}
+          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="flex items-center gap-2 text-xs font-extrabold text-slate-400 uppercase tracking-wider">
+              <HelpCircle className="w-4 h-4 text-brand-500" />
+              <span>Most Asked Questions</span>
+            </div>
 
             <div className="space-y-2">
-              {conversations.map((conv) => (
-                <div
-                  key={conv.id}
+              {mostAskedQuestions.map((q, idx) => (
+                <button
+                  key={idx}
                   onClick={() => setActiveTab('chat')}
-                  className="p-3 rounded-xl bg-slate-50 dark:bg-navy-900/50 hover:bg-slate-100 dark:hover:bg-navy-900 cursor-pointer border border-slate-200/50 dark:border-slate-800/80 transition-all space-y-1"
+                  className="w-full text-left p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-brand-500/10 hover:border-brand-500/30 border border-slate-200/60 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 transition-all flex items-center justify-between group"
                 >
-                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
-                    {conv.title}
-                  </div>
-                  <div className="text-[10px] text-slate-400">
-                    {conv.messages.length} messages • {conv.updated_at}
-                  </div>
-                </div>
+                  <span>{q}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-500 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2" />
+                </button>
               ))}
             </div>
           </div>
@@ -287,6 +335,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
       </div>
+
     </div>
   );
 };

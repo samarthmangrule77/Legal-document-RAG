@@ -57,6 +57,14 @@ def list_documents():
 
 @router.post("/upload")
 async def upload_document(request: Request):
+    from app.routes.billing_routes import CURRENT_SUBSCRIPTION
+    pdf_limit = CURRENT_SUBSCRIPTION.get("pdf_limit", 5)
+    if pdf_limit != -1 and len(DB_DOCS) >= pdf_limit:
+        raise HTTPException(
+            status_code=402,
+            detail=f"Quota Limit Reached: Free plan is capped at {pdf_limit} PDFs. Upgrade to Pro for unlimited document uploads."
+        )
+
     content_type = request.headers.get("content-type", "")
 
     if "json" in content_type:
@@ -106,4 +114,38 @@ async def upload_document(request: Request):
     }
 
     DB_DOCS.insert(0, doc_meta)
+
+    # Broadcast real-time WebSocket notifications
+    try:
+        from app.routes.ws_routes import ws_manager
+        import asyncio
+
+        asyncio.create_task(ws_manager.broadcast({
+            "event": "ocr_completed",
+            "title": "OCR Complete ✔",
+            "message": f"Text extraction & OCR processed for {filename}",
+            "filename": filename,
+            "timestamp": time.strftime("%H:%M:%S")
+        }))
+
+        asyncio.create_task(ws_manager.broadcast({
+            "event": "risk_analysis_completed",
+            "title": "Risk Analysis Finished ✔",
+            "message": f"Contract risk analysis finished for {filename} (Risk Score: {doc_meta['risk_score']})",
+            "filename": filename,
+            "risk_score": doc_meta["risk_score"],
+            "timestamp": time.strftime("%H:%M:%S")
+        }))
+
+        asyncio.create_task(ws_manager.broadcast({
+            "event": "doc_indexed",
+            "title": "Document Indexed ✔",
+            "message": f"{filename} successfully indexed into FAISS Vector DB ({doc_meta['chunk_count']} chunks)",
+            "filename": filename,
+            "doc_id": doc_id,
+            "timestamp": time.strftime("%H:%M:%S")
+        }))
+    except Exception as e:
+        print(f"WebSocket broadcast notice: {e}")
+
     return doc_meta

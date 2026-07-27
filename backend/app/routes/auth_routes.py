@@ -48,6 +48,21 @@ def login(req: LoginRequest):
 @router.post("/register")
 def register(req: RegisterRequest):
     token = create_access_token({"sub": req.email, "role": "owner", "org_id": "org-nexus"})
+    
+    try:
+        from app.routes.ws_routes import ws_manager
+        import asyncio
+        asyncio.create_task(ws_manager.broadcast({
+            "event": "member_joined",
+            "title": "New Team Member Joined ✔",
+            "message": f"{req.name} ({req.email}) joined the workspace",
+            "user_name": req.name,
+            "email": req.email,
+            "timestamp": time.strftime("%H:%M:%S")
+        }))
+    except Exception:
+        pass
+
     return {
         "user": {
             "id": f"u-{hash(req.email) % 10000}",

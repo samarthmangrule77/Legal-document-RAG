@@ -261,5 +261,69 @@ export const api = {
       console.warn("Backend API offline, using cached analytics.", e);
     }
     return MOCK_ADMIN_ANALYTICS;
+  },
+
+  // SaaS Billing & Subscription
+  async getSubscriptionDetails() {
+    try {
+      const res = await fetch(`${API_BASE}/billing/subscription`);
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn("Billing API offline, using client session subscription.", e);
+    }
+    return null;
+  },
+
+  async createCheckoutSession(targetPlan: string, billingCycle: string = 'monthly') {
+    try {
+      const res = await fetch(`${API_BASE}/billing/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target_plan: targetPlan, billing_cycle: billingCycle })
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn("Checkout session API error, fallback local upgrade.", e);
+    }
+    return null;
+  },
+
+  async cancelSubscription() {
+    try {
+      const res = await fetch(`${API_BASE}/billing/cancel-subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: 'User requested cancellation' })
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn("Cancel subscription API error.", e);
+    }
+    return null;
+  },
+
+  // AI Contract Generator
+  async getContractTemplates() {
+    try {
+      const res = await fetch(`${API_BASE}/generator/templates`);
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn("Generator API offline.", e);
+    }
+    return null;
+  },
+
+  async generateContract(templateId: string, parameters: Record<string, any>) {
+    try {
+      const res = await fetch(`${API_BASE}/generator/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ template_id: templateId, parameters })
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn("Generate contract API error.", e);
+    }
+    return null;
   }
 };

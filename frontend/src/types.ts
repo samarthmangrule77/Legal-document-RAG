@@ -57,7 +57,7 @@ export interface RiskItem {
   category: 'unlimited_liability' | 'high_penalties' | 'auto_renewal' | 'non_compete' | 'arbitration' | 'confidentiality' | 'missing_signature' | 'missing_termination';
   title: string;
   description: string;
-  severity: 'high' | 'medium' | 'low';
+  severity: 'critical' | 'high' | 'medium' | 'low';
   clause_ref?: string;
   page_number?: number;
   recommendation: string;
@@ -115,10 +115,13 @@ export interface ChatMessage {
   id: string;
   sender: 'user' | 'ai';
   text: string;
+  summary?: string;
+  reasoning?: string;
   timestamp: string;
   citations?: Citation[];
   confidence_level?: 'High' | 'Medium' | 'Low';
   beginner_version?: string;
+  related_clauses?: string[];
   follow_up_questions?: string[];
   is_streaming?: boolean;
 }
@@ -160,4 +163,35 @@ export interface AdminAnalytics {
   storage_used_mb: number;
   popular_topics: { topic: string; count: number }[];
   daily_query_trend: { date: string; queries: number }[];
+}
+
+export interface SubscriptionDetails {
+  plan_id: 'free' | 'pro' | 'enterprise';
+  plan_name: string;
+  pdf_limit: number; // 5 for free, -1 for unlimited
+  current_pdf_count: number;
+  status: string;
+  billing_cycle: 'monthly' | 'annual';
+  price_per_month: number;
+  renews_at: string;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
+}
+
+export interface PricingPlan {
+  id: 'free' | 'pro' | 'enterprise';
+  name: string;
+  price_monthly: number;
+  price_annual: number;
+  pdf_limit: number;
+  features: string[];
+}
+
+export interface InvoiceItem {
+  id: string;
+  date: string;
+  amount: string;
+  status: string;
+  plan: string;
+  pdf_url: string;
 }
