@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  CreditCard, 
-  Check, 
-  Zap, 
-  ShieldCheck, 
-  Sparkles, 
-  FileText, 
-  Download, 
-  ArrowRight, 
-  AlertCircle, 
-  CheckCircle2, 
-  Building, 
+import {
+  CreditCard,
+  Check,
+  Zap,
+  ShieldCheck,
+  Sparkles,
+  FileText,
+  Download,
+  ArrowRight,
+  AlertCircle,
+  CheckCircle2,
+  Building,
   TrendingUp,
   Lock,
   Loader2
@@ -81,7 +81,7 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-12">
-      
+
       {/* Top Banner Header */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-navy-950 to-indigo-950 p-8 border border-slate-800 text-white shadow-2xl">
         <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -105,9 +105,8 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
               <div className="text-xs text-slate-400 font-medium">Active Plan</div>
               <div className="text-base font-bold text-white flex items-center gap-2">
                 {subscription.plan_name}
-                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${
-                  isFreePlan ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                }`}>
+                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${isFreePlan ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                  }`}>
                   {subscription.status.toUpperCase()}
                 </span>
               </div>
@@ -131,7 +130,7 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
 
       {/* Limit / Quota Usage Progress Gauge */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
+
         {/* Card 1: PDF Upload Quota Meter */}
         <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between">
           <div className="flex items-center justify-between">
@@ -161,10 +160,9 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
             {/* Progress bar */}
             {isFreePlan ? (
               <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200/50 dark:border-slate-700/50">
-                <div 
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    isAtLimit ? 'bg-rose-500' : isNearLimit ? 'bg-amber-500' : 'bg-brand-500'
-                  }`}
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${isAtLimit ? 'bg-rose-500' : isNearLimit ? 'bg-amber-500' : 'bg-brand-500'
+                    }`}
                   style={{ width: `${Math.min(100, (currentPdfCount / 5) * 100)}%` }}
                 ></div>
               </div>
@@ -177,7 +175,7 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
           </div>
 
           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            {isFreePlan 
+            {isFreePlan
               ? 'Free plan is capped at 5 PDFs. Upgrade to Pro for unlimited contract storage.'
               : 'Pro tier enjoys unlimited legal document storage with priority vector indexing.'}
           </p>
@@ -247,7 +245,7 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
 
       {/* Plan Selection Section */}
       <div className="space-y-6">
-        
+
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-black text-slate-900 dark:text-white">Select Your SaaS Tier</h2>
@@ -260,21 +258,19 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
           <div className="flex items-center bg-slate-200/70 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-300/50 dark:border-slate-700">
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                billingCycle === 'monthly'
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${billingCycle === 'monthly'
                   ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               Monthly Billing
             </button>
             <button
               onClick={() => setBillingCycle('annual')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                billingCycle === 'annual'
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${billingCycle === 'annual'
                   ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               Annual Billing
               <span className="px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
@@ -294,11 +290,10 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
             return (
               <div
                 key={plan.id}
-                className={`relative flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 ${
-                  isPopular
+                className={`relative flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 ${isPopular
                     ? 'bg-white dark:bg-slate-900 border-2 border-brand-500 shadow-xl shadow-brand-500/10 scale-105 z-10'
                     : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:border-slate-300 dark:hover:border-slate-700'
-                }`}
+                  }`}
               >
                 {/* Popular Badge */}
                 {isPopular && (
@@ -363,13 +358,12 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
                 <button
                   disabled={isCurrent || loadingPlan === plan.id}
                   onClick={() => handleUpgrade(plan)}
-                  className={`w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-bold text-sm transition-all ${
-                    isCurrent
+                  className={`w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-bold text-sm transition-all ${isCurrent
                       ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-default border border-slate-200 dark:border-slate-700'
                       : isPopular
-                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-lg shadow-brand-500/25 active:scale-98'
-                      : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-98'
-                  }`}
+                        ? 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-lg shadow-brand-500/25 active:scale-98'
+                        : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-98'
+                    }`}
                 >
                   {loadingPlan === plan.id ? (
                     <Loader2 className="w-4 h-4 animate-spin text-current" />
@@ -427,7 +421,7 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
                     </span>
                   </td>
                   <td className="px-4 py-3.5 text-right">
-                    <button 
+                    <button
                       onClick={() => alert(`Downloading Stripe PDF Receipt for ${inv.id}`)}
                       className="inline-flex items-center gap-1 text-brand-600 dark:text-brand-400 hover:underline font-semibold"
                     >
