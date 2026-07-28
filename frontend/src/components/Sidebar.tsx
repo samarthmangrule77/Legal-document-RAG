@@ -21,13 +21,15 @@ import {
   Brain,
   Settings,
   Code2,
-  Bot
+  Bot,
+  User as UserIcon
 } from 'lucide-react';
 
 export type NavTab = 
   | 'dashboard' 
   | 'agent'
   | 'org'
+  | 'profile'
   | 'generator'
   | 'workflows'
   | 'graph'
@@ -65,6 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navItems = [
     { id: 'dashboard' as NavTab, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'profile' as NavTab, label: 'User Profile & Security', icon: UserIcon, alert: 'Account 👤' },
     { id: 'agent' as NavTab, label: 'Autonomous AI Agent', icon: Bot, alert: 'Agent 🤖' },
     { id: 'generator' as NavTab, label: 'AI Contract Generator', icon: FileSignature, alert: 'New ✨' },
     { id: 'workflows' as NavTab, label: 'AI Workflow Builder', icon: Zap, alert: 'Automate ⚡' },

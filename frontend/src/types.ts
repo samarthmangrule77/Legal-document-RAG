@@ -38,7 +38,16 @@ export interface User {
   role: Role;
   active_org_id: string;
   active_team_id: string; // 'all' or specific team_id
+  job_title?: string;
+  company_name?: string;
+  email_verified?: boolean;
+  auth_provider?: string;
+  created_at?: string;
+  avatar_url?: string;
+  remember_me?: boolean;
   token?: string;
+  access_token?: string;
+  refresh_token?: string;
 }
 
 export interface DocumentChunk {

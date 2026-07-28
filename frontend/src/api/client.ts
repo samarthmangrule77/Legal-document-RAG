@@ -1,103 +1,378 @@
-import { LegalDocument, Conversation, ComparisonResult, AdminAnalytics, ChatMessage } from '../types';
+import { LegalDocument, Conversation, ComparisonResult, AdminAnalytics, ChatMessage, User } from '../types';
 import { INITIAL_DOCUMENTS, INITIAL_CONVERSATIONS, MOCK_COMPARISON_RESULT, MOCK_ADMIN_ANALYTICS } from '../mockData';
 
 const API_BASE = '/api';
 
+// Token Storage Keys
+const ACCESS_TOKEN_KEY = 'lexirag_access_token';
+const REFRESH_TOKEN_KEY = 'lexirag_refresh_token';
+const REMEMBER_ME_KEY = 'lexirag_remember_me';
+
+export const tokenStorage = {
+  getAccessToken(): string | null {
+    return localStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(ACCESS_TOKEN_KEY);
+  },
+  getRefreshToken(): string | null {
+    return localStorage.getItem(REFRESH_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY);
+  },
+  setTokens(accessToken: string, refreshToken?: string, rememberMe: boolean = false) {
+    if (rememberMe) {
+      localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+      if (refreshToken) localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+      localStorage.setItem(REMEMBER_ME_KEY, 'true');
+      sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+      sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+    } else {
+      sessionStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+      if (refreshToken) sessionStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(REMEMBER_ME_KEY);
+    }
+  },
+  clearTokens() {
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(REMEMBER_ME_KEY);
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+  }
+};
+
+// Authenticated fetch wrapper with automatic bearer token & token refresh retry
+async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
+  const token = tokenStorage.getAccessToken();
+  const headers = new Headers(options.headers || {});
+
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  options.headers = headers;
+
+  let response = await fetch(url, options);
+
+  // Auto-refresh token if 401 Unauthorized occurs and refresh token is available
+  if (response.status === 401 && tokenStorage.getRefreshToken()) {
+    const refreshed = await api.refreshToken();
+    if (refreshed && refreshed.access_token) {
+      headers.set('Authorization', `Bearer ${refreshed.access_token}`);
+      options.headers = headers;
+      response = await fetch(url, options);
+    } else {
+      tokenStorage.clearTokens();
+    }
+  }
+
+  return response;
+}
+
 export const api = {
-  // Auth
-  async login(email: string, password: string) {
+  // --- AUTHENTICATION API ---
+
+  async login(email: string, password: string, rememberMe: boolean = false) {
     try {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password, remember_me: rememberMe })
       });
-      if (res.ok) return await res.json();
-    } catch (e) {
-      console.warn("Backend API unavailable, using local session state.", e);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.access_token) {
+          tokenStorage.setTokens(data.access_token, data.refresh_token, rememberMe);
+        }
+        return data;
+      } else {
+        const err = await res.json();
+        throw new Error(err.detail || "Authentication failed.");
+      }
+    } catch (e: any) {
+      if (e.message && e.message !== "Failed to fetch") {
+        throw e;
+      }
+      console.warn("Backend API offline, serving local fallback user.", e);
     }
-    return {
-      user: { id: 'u-1', email, name: email.split('@')[0] || 'User', role: 'owner', active_org_id: 'org-nexus', active_team_id: 'all' },
-      token: 'jwt-mock-token-abc123'
+
+    // Local fallback when backend server is un-contactable
+    const mockUser: User = {
+      id: 'u-1',
+      email: email || 'alex.rivera@nexuscorp.com',
+      name: email ? (email.split('@')[0].replace('.', ' ').replace(/^./, c => c.toUpperCase())) : 'Alex Rivera',
+      role: 'owner',
+      active_org_id: 'org-nexus',
+      active_team_id: 'all',
+      job_title: 'Head of Legal Operations',
+      company_name: 'Nexus Corp',
+      email_verified: true,
+      auth_provider: 'local',
+      created_at: new Date().toISOString().split('T')[0]
     };
+    tokenStorage.setTokens('jwt-mock-access-token', 'jwt-mock-refresh-token', rememberMe);
+    return { user: mockUser, access_token: 'jwt-mock-access-token', refresh_token: 'jwt-mock-refresh-token' };
   },
 
-  async guestLogin() {
+  async register(name: string, email: string, password: string, companyName: string = 'Nexus Corp') {
     try {
-      const res = await fetch(`${API_BASE}/auth/guest`, { method: 'POST' });
-      if (res.ok) return await res.json();
-    } catch (e) {
-      console.warn("Backend API unavailable, logging in as guest locally.", e);
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, company_name: companyName })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.access_token) {
+          tokenStorage.setTokens(data.access_token, data.refresh_token, true);
+        }
+        return data;
+      } else {
+        const err = await res.json();
+        throw new Error(err.detail || "Registration failed.");
+      }
+    } catch (e: any) {
+      if (e.message && e.message !== "Failed to fetch") {
+        throw e;
+      }
+      console.warn("Backend API offline, completing registration locally.", e);
     }
+
+    const mockUser: User = {
+      id: `u-${Date.now()}`,
+      email,
+      name,
+      role: 'owner',
+      active_org_id: 'org-nexus',
+      active_team_id: 'all',
+      job_title: 'Enterprise Workspace Admin',
+      company_name: companyName,
+      email_verified: false,
+      auth_provider: 'local',
+      created_at: new Date().toISOString().split('T')[0]
+    };
+    tokenStorage.setTokens('jwt-mock-register-token', 'jwt-mock-refresh-token', true);
+    return { user: mockUser, access_token: 'jwt-mock-register-token', refresh_token: 'jwt-mock-refresh-token' };
+  },
+
+  async refreshToken() {
+    const refreshToken = tokenStorage.getRefreshToken();
+    if (!refreshToken) return null;
+    try {
+      const res = await fetch(`${API_BASE}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: refreshToken })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const isRemember = localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+        tokenStorage.setTokens(data.access_token, data.refresh_token, isRemember);
+        return data;
+      }
+    } catch (e) {
+      console.warn("Refresh token request failed.", e);
+    }
+    return null;
+  },
+
+  async logout() {
+    const refreshToken = tokenStorage.getRefreshToken();
+    try {
+      await fetchWithAuth(`${API_BASE}/auth/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: refreshToken })
+      });
+    } catch (e) {
+      console.warn("Logout endpoint call offline.", e);
+    } finally {
+      tokenStorage.clearTokens();
+    }
+    return { status: 'success' };
+  },
+
+  async getMe(): Promise<User | null> {
+    const token = tokenStorage.getAccessToken();
+    if (!token) return null;
+
+    try {
+      const res = await fetchWithAuth(`${API_BASE}/auth/me`);
+      if (res.ok) {
+        const data = await res.json();
+        return data.user;
+      }
+    } catch (e) {
+      console.warn("Get current user profile offline.", e);
+    }
+
+    // Fallback profile if backend offline but token exists
     return {
-      user: { id: 'guest-99', email: 'guest@lexirag.ai', name: 'Guest User', role: 'member', active_org_id: 'org-nexus', active_team_id: 'all' },
-      token: 'jwt-guest-token'
+      id: 'u-1',
+      email: 'alex.rivera@nexuscorp.com',
+      name: 'Alex Rivera',
+      role: 'owner',
+      active_org_id: 'org-nexus',
+      active_team_id: 'all',
+      job_title: 'Head of Legal & Compliance',
+      company_name: 'Nexus Corp',
+      email_verified: true,
+      auth_provider: 'local',
+      created_at: '2026-01-15'
     };
   },
 
-  async ssoLogin(provider: 'google' | 'microsoft' | 'github') {
+  async ssoLogin(provider: 'google' | 'microsoft' | 'github', email?: string, name?: string) {
     try {
       const res = await fetch(`${API_BASE}/auth/sso/${provider}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider })
+        body: JSON.stringify({ provider, email, name })
       });
-      if (res.ok) return await res.json();
+      if (res.ok) {
+        const data = await res.json();
+        if (data.access_token) {
+          tokenStorage.setTokens(data.access_token, data.refresh_token, true);
+        }
+        return data;
+      }
     } catch (e) {
-      console.warn("Backend SSO offline, generating authenticated SSO token.", e);
+      console.warn("Backend SSO offline, generating local OAuth session.", e);
     }
 
-    const nameMap = { google: 'Google Workspace', microsoft: 'Microsoft Entra ID', github: 'GitHub Enterprise' };
-    return {
-      user: {
-        id: `sso-${provider}-99`,
-        email: `sso.user@${provider}.com`,
-        name: `Verified ${nameMap[provider]} User`,
-        role: 'owner',
-        active_org_id: 'org-nexus',
-        active_team_id: 'all'
-      },
-      token: `jwt-sso-${provider}-token`
+    const providerNames = { google: 'Google Workspace', microsoft: 'Microsoft Entra ID', github: 'GitHub Enterprise' };
+    const mockEmail = email || `alex.rivera@${provider}.company.com`;
+    const mockName = name || `Verified ${providerNames[provider]} User`;
+    const mockUser: User = {
+      id: `sso-${provider}-${Date.now()}`,
+      email: mockEmail,
+      name: mockName,
+      role: 'owner',
+      active_org_id: 'org-nexus',
+      active_team_id: 'all',
+      job_title: `${providerNames[provider]} Single Sign-On User`,
+      company_name: 'Nexus Corp',
+      email_verified: true,
+      auth_provider: provider,
+      created_at: new Date().toISOString().split('T')[0]
     };
+    tokenStorage.setTokens(`jwt-sso-${provider}-token`, `jwt-sso-refresh-${provider}`, true);
+    return { user: mockUser, access_token: `jwt-sso-${provider}-token`, sso_provider: providerNames[provider] };
   },
 
-  async sendOTP(email: string) {
+  async forgotPassword(email: string) {
     try {
-      const res = await fetch(`${API_BASE}/auth/otp/send`, {
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
       if (res.ok) return await res.json();
     } catch (e) {
-      console.warn("Backend OTP offline, using local OTP simulator.", e);
+      console.warn("Backend forgot password offline.", e);
     }
-    return { status: 'success', message: `OTP sent to ${email}`, demo_code: '123456' };
+    return { status: 'success', message: `Password reset pin sent to ${email}`, demo_code: '123456' };
   },
 
-  async verifyOTP(email: string, code: string) {
+  async resetPassword(email: string, code: string, newPassword: string) {
     try {
-      const res = await fetch(`${API_BASE}/auth/otp/verify`, {
+      const res = await fetch(`${API_BASE}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code, new_password: newPassword })
+      });
+      if (res.ok) return await res.json();
+      const err = await res.json();
+      throw new Error(err.detail || "Password reset failed.");
+    } catch (e: any) {
+      if (e.message && e.message !== "Failed to fetch") throw e;
+      console.warn("Backend reset password offline.", e);
+    }
+    return { status: 'success', message: 'Password reset successfully.' };
+  },
+
+  async sendEmailVerification(email: string) {
+    try {
+      const res = await fetchWithAuth(`${API_BASE}/auth/verify-email/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn("Backend email verification send offline.", e);
+    }
+    return { status: 'success', message: `Verification code sent to ${email}`, demo_code: '123456' };
+  },
+
+  async confirmEmailVerification(email: string, code: string) {
+    try {
+      const res = await fetchWithAuth(`${API_BASE}/auth/verify-email/confirm`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code })
       });
       if (res.ok) return await res.json();
-    } catch (e) {
-      console.warn("Backend OTP offline, verifying local OTP code.", e);
+      const err = await res.json();
+      throw new Error(err.detail || "Invalid verification pin.");
+    } catch (e: any) {
+      if (e.message && e.message !== "Failed to fetch") throw e;
+      console.warn("Backend confirm email verification offline.", e);
     }
+    return { status: 'success', message: 'Email address verified!' };
+  },
 
-    return {
-      user: {
-        id: `u-otp-${Date.now()}`,
-        email,
-        name: email.split('@')[0].replace('.', ' ').toUpperCase(),
-        role: 'owner',
-        active_org_id: 'org-nexus',
-        active_team_id: 'all'
-      },
-      token: 'jwt-otp-verified-token'
+  async updateProfile(payload: { name?: string; job_title?: string; company_name?: string; current_password?: string; new_password?: string }) {
+    try {
+      const res = await fetchWithAuth(`${API_BASE}/auth/profile/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) return await res.json();
+      const err = await res.json();
+      throw new Error(err.detail || "Profile update failed.");
+    } catch (e: any) {
+      if (e.message && e.message !== "Failed to fetch") throw e;
+      console.warn("Backend update profile offline.", e);
+    }
+    return { status: 'success', message: 'Profile updated locally.' };
+  },
+
+  async guestLogin() {
+    try {
+      const res = await fetch(`${API_BASE}/auth/guest`, { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.access_token) {
+          tokenStorage.setTokens(data.access_token, data.refresh_token, false);
+        }
+        return data;
+      }
+    } catch (e) {
+      console.warn("Backend API unavailable, logging in as guest locally.", e);
+    }
+    const mockUser: User = {
+      id: 'guest-99',
+      email: 'guest@lexirag.ai',
+      name: 'Guest User',
+      role: 'member',
+      active_org_id: 'org-nexus',
+      active_team_id: 'all',
+      job_title: 'Guest Evaluator',
+      company_name: 'LexiRAG Sandbox',
+      email_verified: true,
+      auth_provider: 'guest',
+      created_at: new Date().toISOString().split('T')[0]
     };
+    tokenStorage.setTokens('jwt-guest-token', 'jwt-guest-refresh-token', false);
+    return { user: mockUser, access_token: 'jwt-guest-token' };
+  },
+
+  async sendOTP(email: string) {
+    return this.forgotPassword(email);
+  },
+
+  async verifyOTP(email: string, code: string) {
+    return this.confirmEmailVerification(email, code);
   },
 
   // Documents

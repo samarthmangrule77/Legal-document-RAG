@@ -25,6 +25,7 @@ import { FloatingAIAssistant } from './components/FloatingAIAssistant';
 import { AuthModal } from './components/AuthModal';
 import { PDFViewerModal } from './components/PDFViewerModal';
 import { AuthView } from './components/AuthView';
+import { ProfileView } from './components/ProfileView';
 import { NotificationToastContainer, NotificationEvent } from './components/NotificationToastContainer';
 
 import { LegalDocument, Conversation, User, ChatMessage, Organization, OrgMember, Role, Citation, SubscriptionDetails, PricingPlan, InvoiceItem } from './types';
@@ -287,15 +288,25 @@ export const App: React.FC = () => {
 
   const activeOrg = organizations.find(o => o.id === activeOrgId) || organizations[0];
 
-  // Dedicated Auth Page State
-  const [user, setUser] = useState<User | null>({
-    id: 'u-1',
-    email: 'alex.rivera@nexuscorp.com',
-    name: 'Alex Rivera',
-    role: 'owner',
-    active_org_id: activeOrgId,
-    active_team_id: activeTeamId
-  });
+  // Dedicated Auth Page State & Initial Session Check
+  const [user, setUser] = useState<User | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    async function restoreSession() {
+      const activeUser = await api.getMe();
+      if (activeUser) {
+        setUser(activeUser);
+      }
+      setAuthChecked(true);
+    }
+    restoreSession();
+  }, []);
+
+  const handleLogout = async () => {
+    await api.logout();
+    setUser(null);
+  };
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCreateOrgModalOpen, setIsCreateOrgModalOpen] = useState(false);
@@ -465,7 +476,19 @@ export const App: React.FC = () => {
 
   const highRiskCount = filteredDocuments.filter(d => d.risk_score >= 60).length;
 
-  // Render Dedicated Full-Screen Auth View if user is signed out
+  // Render Loading spinner while checking initial auth status
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-xs text-slate-400 font-mono">Verifying LexiRAG Security Vault...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Protected Route: Render Dedicated Full-Screen Auth View if user is signed out
   if (!user) {
     return <AuthView onSuccess={(u) => setUser(u)} />;
   }
@@ -498,7 +521,8 @@ export const App: React.FC = () => {
         onSelectTeam={(tid) => setActiveTeamId(tid)}
         onCreateOrgModal={() => setIsCreateOrgModalOpen(true)}
         onOpenAuth={() => setUser(null)}
-        onLogout={() => setUser(null)}
+        onLogout={handleLogout}
+        onOpenProfile={() => setActiveTab('profile')}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onQuickSearch={() => setActiveTab('search')}
@@ -528,6 +552,14 @@ export const App: React.FC = () => {
               conversations={conversations}
               setActiveTab={setActiveTab}
               setSelectedDoc={setSelectedDoc}
+            />
+          )}
+
+          {activeTab === 'profile' && user && (
+            <ProfileView
+              user={user}
+              onUpdateUser={(updated) => setUser(updated)}
+              onLogout={handleLogout}
             />
           )}
 

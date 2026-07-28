@@ -259,8 +259,8 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
             <button
               onClick={() => setBillingCycle('monthly')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${billingCycle === 'monthly'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
             >
               Monthly Billing
@@ -268,8 +268,8 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
             <button
               onClick={() => setBillingCycle('annual')}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${billingCycle === 'annual'
-                  ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
             >
               Annual Billing
@@ -291,8 +291,8 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
               <div
                 key={plan.id}
                 className={`relative flex flex-col justify-between p-8 rounded-3xl transition-all duration-300 ${isPopular
-                    ? 'bg-white dark:bg-slate-900 border-2 border-brand-500 shadow-xl shadow-brand-500/10 scale-105 z-10'
-                    : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:border-slate-300 dark:hover:border-slate-700'
+                  ? 'bg-white dark:bg-slate-900 border-2 border-brand-500 shadow-xl shadow-brand-500/10 scale-105 z-10'
+                  : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
               >
                 {/* Popular Badge */}
@@ -359,10 +359,10 @@ export const BillingDashboardView: React.FC<BillingDashboardViewProps> = ({
                   disabled={isCurrent || loadingPlan === plan.id}
                   onClick={() => handleUpgrade(plan)}
                   className={`w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl font-bold text-sm transition-all ${isCurrent
-                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-default border border-slate-200 dark:border-slate-700'
-                      : isPopular
-                        ? 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-lg shadow-brand-500/25 active:scale-98'
-                        : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-98'
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-default border border-slate-200 dark:border-slate-700'
+                    : isPopular
+                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-lg shadow-brand-500/25 active:scale-98'
+                      : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-98'
                     }`}
                 >
                   {loadingPlan === plan.id ? (

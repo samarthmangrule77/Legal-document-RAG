@@ -16,6 +16,7 @@ interface NavbarProps {
   onCreateOrgModal: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
+  onOpenProfile?: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   onQuickSearch: () => void;
@@ -36,6 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onCreateOrgModal,
   onOpenAuth,
   onLogout,
+  onOpenProfile,
   searchQuery,
   setSearchQuery,
   onQuickSearch,
@@ -170,7 +172,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* User Account / Guest */}
           {user ? (
             <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
-              <div className="flex items-center gap-2.5">
+              <div 
+                onClick={onOpenProfile}
+                className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity"
+              >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-brand-600 flex items-center justify-center text-white font-bold text-xs shadow">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
