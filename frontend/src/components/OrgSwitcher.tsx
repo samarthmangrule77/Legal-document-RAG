@@ -29,21 +29,21 @@ export const OrgSwitcher: React.FC<OrgSwitcherProps> = ({
       {/* Organization Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-navy-900/80 hover:bg-slate-200 dark:hover:bg-navy-900 border border-slate-200/80 dark:border-slate-700/60 transition-all text-left group"
+        className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-white/[0.04]/80 hover:bg-slate-200 dark:hover:bg-navy-900 border border-slate-200/80 dark:border-white/[0.08] transition-all text-left group"
       >
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+        <div className="w-7 h-7 rounded-lg bg-brand-600 to-indigo-600 text-white flex items-center justify-center font-medium text-xs shadow-sm">
           {activeOrg.name.charAt(0)}
         </div>
 
         <div className="hidden sm:block">
-          <div className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5 leading-tight">
+          <div className="text-xs font-medium text-slate-800 dark:text-slate-100 flex items-center gap-1.5 leading-tight">
             <span>{activeOrg.name}</span>
-            <span className="px-1.5 py-0.2 text-[9px] font-bold rounded bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+            <span className="px-1.5 py-0.2 text-[10px] font-medium rounded bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/15">
               {activeOrg.plan.split(' ')[0]}
             </span>
           </div>
 
-          <div className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+          <div className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
             <Users className="w-2.5 h-2.5" />
             <span>{activeTeam ? activeTeam.name : 'All Department Teams'}</span>
           </div>
@@ -54,9 +54,9 @@ export const OrgSwitcher: React.FC<OrgSwitcherProps> = ({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-72 sm:w-80 glass-card bg-white dark:bg-navy-950 rounded-2xl p-3 shadow-2xl border border-slate-200 dark:border-slate-800 z-50 animate-slide-up space-y-3">
+        <div className="absolute left-0 mt-2 w-72 sm:w-80 bg-white dark:bg-gray-900 rounded-lg p-3 shadow-lg border border-slate-200 dark:border-white/[0.06] z-50 animate-slide-up space-y-3">
           
-          <div className="px-2 pt-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+          <div className="px-2 pt-1 text-[11px] font-medium text-slate-400 uppercase tracking-wider flex items-center justify-between">
             <span>Select Organization</span>
             <span>{organizations.length} Orgs</span>
           </div>
@@ -74,17 +74,17 @@ export const OrgSwitcher: React.FC<OrgSwitcherProps> = ({
                   }}
                   className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-medium transition-all ${
                     isSelected
-                      ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold border border-brand-500/20'
+                      ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400 font-medium border border-brand-500/15'
                       : 'hover:bg-slate-100 dark:hover:bg-navy-900 text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-bold text-xs text-slate-700 dark:text-slate-300">
+                    <div className="w-7 h-7 rounded-lg bg-slate-200 dark:bg-white/[0.05] flex items-center justify-center font-medium text-xs text-slate-700 dark:text-slate-300">
                       {org.name.charAt(0)}
                     </div>
                     <div className="text-left">
-                      <div className="font-bold text-slate-900 dark:text-slate-100">{org.name}</div>
-                      <div className="text-[10px] text-slate-400">{org.teams.length} Teams • {org.plan}</div>
+                      <div className="font-medium text-slate-900 dark:text-slate-100">{org.name}</div>
+                      <div className="text-[11px] text-slate-400">{org.teams.length} Teams • {org.plan}</div>
                     </div>
                   </div>
 
@@ -95,8 +95,8 @@ export const OrgSwitcher: React.FC<OrgSwitcherProps> = ({
           </div>
 
           {/* Department Team Selector inside Active Org */}
-          <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1.5">
-            <div className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+          <div className="pt-2 border-t border-slate-200 dark:border-white/[0.06] space-y-1.5">
+            <div className="px-2 text-[11px] font-medium text-slate-400 uppercase tracking-wider flex items-center gap-1">
               <Layers className="w-3 h-3 text-indigo-500" />
               <span>Department / Team Scope</span>
             </div>
@@ -138,13 +138,13 @@ export const OrgSwitcher: React.FC<OrgSwitcherProps> = ({
           </div>
 
           {/* Create New Org Action */}
-          <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+          <div className="pt-2 border-t border-slate-200 dark:border-white/[0.06]">
             <button
               onClick={() => {
                 setIsOpen(false);
                 onCreateOrgModal();
               }}
-              className="w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+              className="w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Create New Organization</span>

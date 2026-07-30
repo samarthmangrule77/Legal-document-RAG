@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   Scale, 
   ShieldCheck, 
-  Sparkles, 
   Lock, 
   Mail, 
   KeyRound, 
@@ -11,11 +10,9 @@ import {
   ArrowRight, 
   CheckCircle2, 
   FileText, 
-  ShieldAlert, 
-  Globe, 
-  Zap,
-  HelpCircle,
-  AlertCircle
+  Search,
+  BarChart3,
+  Sparkles
 } from 'lucide-react';
 import { User } from '../types';
 import { api } from '../api/client';
@@ -61,7 +58,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
       if (res.user) onSuccess(res.user);
     } catch (err: any) {
       setLoading(false);
-      setErrorMsg("OAuth sign-in failed. Please try again.");
+      setErrorMsg("Sign-in failed. Please try again.");
     }
   };
 
@@ -112,7 +109,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
   const handleSendForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      setErrorMsg("Please enter your work email.");
+      setErrorMsg("Please enter your email.");
       return;
     }
     setLoading(true);
@@ -122,7 +119,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
       setLoading(false);
       setForgotStep(2);
       if (res.demo_code) setDemoCodeNotice(res.demo_code);
-      setSuccessMsg("Verification reset code sent to your email!");
+      setSuccessMsg("Reset code sent to your email.");
     } catch (err: any) {
       setLoading(false);
       setErrorMsg("Failed to send reset code.");
@@ -132,7 +129,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
-      setErrorMsg("New passwords do not match.");
+      setErrorMsg("Passwords do not match.");
       return;
     }
     if (newPassword.length < 6) {
@@ -144,7 +141,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
     try {
       const res = await api.resetPassword(email, resetCode, newPassword);
       setLoading(false);
-      setSuccessMsg("Password reset & email address verified successfully!");
+      setSuccessMsg("Password reset successfully.");
       if (res && res.user) {
         onSuccess({
           ...res.user,
@@ -156,7 +153,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
       }
     } catch (err: any) {
       setLoading(false);
-      setErrorMsg(err.message || "Invalid email verification pin code or password reset failed.");
+      setErrorMsg(err.message || "Invalid code or reset failed.");
     }
   };
 
@@ -172,7 +169,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
       if (res.demo_code) setDemoCodeNotice(res.demo_code);
     } catch (err: any) {
       setLoading(false);
-      setErrorMsg("Failed to send OTP code.");
+      setErrorMsg("Failed to send OTP.");
     }
   };
 
@@ -187,7 +184,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
       if (res.user) onSuccess(res.user);
     } catch (err: any) {
       setLoading(false);
-      setErrorMsg("Invalid OTP code. Please check your 6-digit pin.");
+      setErrorMsg("Invalid OTP code.");
     }
   };
 
@@ -202,172 +199,133 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
     }
   };
 
-  return (
-    <div className="min-h-screen w-full bg-slate-950 text-slate-100 flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-fade-in font-sans selection:bg-brand-500 selection:text-white relative overflow-hidden">
-      
-      {/* Background Ambient Glow FX */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-brand-600/15 rounded-full blur-[140px] pointer-events-none"></div>
-      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+  const inputClass = "w-full pl-10 pr-4 py-2.5 bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.1] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500/40 placeholder-slate-400 dark:placeholder-slate-500";
+  const smallInputClass = "w-full pl-9 pr-3 py-2.5 bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.1] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500/40 placeholder-slate-400 dark:placeholder-slate-500";
+  const labelClass = "text-xs font-medium text-slate-600 dark:text-slate-300";
 
-      {/* Main Container Layout */}
-      <div className="w-full max-w-6xl glass-panel bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
+  return (
+    <div className="min-h-screen w-full bg-slate-50 dark:bg-gray-950 text-slate-800 dark:text-slate-100 flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-fade-in font-sans">
+
+      {/* Main Container */}
+      <div className="w-full max-w-5xl bg-white dark:bg-gray-900 rounded-2xl border border-slate-200 dark:border-white/[0.08] shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
         
-        {/* LEFT COLUMN: Hero Enterprise Branding (5 cols) */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-brand-950 via-indigo-950 to-navy-950 p-8 sm:p-12 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-white/10 space-y-8">
+        {/* LEFT: Value proposition */}
+        <div className="lg:col-span-5 bg-slate-900 dark:bg-gray-950 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-white/[0.08]">
           
-          {/* Logo & Badge */}
           <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-brand-500/30">
-                <Scale className="w-6 h-6" />
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-brand-600 text-white flex items-center justify-center">
+                <Scale className="w-5 h-5" />
               </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold text-2xl tracking-tight text-white">LexiRAG</span>
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-brand-500/20 text-brand-300 rounded border border-brand-500/30">
-                    ENTERPRISE
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400 font-medium">Legal Document RAG Intelligence</p>
-              </div>
+              <span className="font-semibold text-lg text-white tracking-tight">LexiRAG</span>
             </div>
 
             <div className="space-y-3">
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
-                Production-Ready AI Legal Assistant & Vector Vault
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight">
+                Your legal documents,<br />analyzed in seconds.
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                Analyze contracts, audit high-risk commitments, compare agreements side-by-side, and ask natural language queries grounded in exact page & clause sources.
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Upload contracts and agreements, then ask questions in plain English. Get answers with exact page and clause references.
               </p>
             </div>
           </div>
 
-          {/* Feature Bullets */}
-          <div className="space-y-3">
+          {/* Benefits */}
+          <div className="space-y-4 mt-8">
             
             <div className="flex items-start gap-3">
-              <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 mt-0.5">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <div className="text-xs">
-                <div className="font-bold text-white">JWT Access & Refresh Token Rotation</div>
-                <div className="text-slate-400">Secure session persistence with remember me & instant logout.</div>
+              <Search className="w-4 h-4 text-brand-400 mt-0.5 flex-shrink-0" />
+              <div className="text-sm">
+                <div className="font-medium text-white">Semantic search</div>
+                <div className="text-slate-400 text-xs mt-0.5">Find clauses by meaning, not just keywords.</div>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="p-1.5 rounded-lg bg-brand-500/20 text-brand-400 mt-0.5">
-                <Globe className="w-4 h-4" />
-              </div>
-              <div className="text-xs">
-                <div className="font-bold text-white">Google & GitHub Single Sign-On</div>
-                <div className="text-slate-400">OAuth enterprise tenant integration for seamless access.</div>
+              <ShieldCheck className="w-4 h-4 text-brand-400 mt-0.5 flex-shrink-0" />
+              <div className="text-sm">
+                <div className="font-medium text-white">Risk detection</div>
+                <div className="text-slate-400 text-xs mt-0.5">Automatically flag liability, non-compete, and renewal risks.</div>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 mt-0.5">
-                <ShieldAlert className="w-4 h-4" />
-              </div>
-              <div className="text-xs">
-                <div className="font-bold text-white">Email Verification & Password Reset</div>
-                <div className="text-slate-400">6-digit PIN reset workflow & account security controls.</div>
+              <BarChart3 className="w-4 h-4 text-brand-400 mt-0.5 flex-shrink-0" />
+              <div className="text-sm">
+                <div className="font-medium text-white">Side-by-side comparison</div>
+                <div className="text-slate-400 text-xs mt-0.5">Compare versions and spot what changed.</div>
               </div>
             </div>
 
           </div>
 
-          {/* Security Footer */}
-          <div className="pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-            <span className="flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-emerald-400" />
-              SOC2 & 256-Bit Encrypted
-            </span>
-            <span>v1.0 Production</span>
+          {/* Footer */}
+          <div className="pt-6 mt-6 border-t border-white/[0.08] text-[11px] text-slate-500">
+            Secure, encrypted, and private.
           </div>
 
         </div>
 
-        {/* RIGHT COLUMN: Dedicated Authentication Portal (7 cols) */}
-        <div className="lg:col-span-7 p-6 sm:p-12 flex flex-col justify-center space-y-6 bg-slate-900/60">
+        {/* RIGHT: Auth Forms */}
+        <div className="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-center space-y-5 bg-white dark:bg-gray-900">
           
-          {/* Mode Navigation Tabs */}
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4">
-            <div className="flex items-center gap-1.5 p-1 bg-slate-950 rounded-2xl border border-white/10 text-xs font-bold">
-              <button
-                onClick={() => { setTab('signin'); setErrorMsg(null); setSuccessMsg(null); }}
-                className={`px-3.5 py-2 rounded-xl transition-all ${
-                  tab === 'signin' ? 'bg-brand-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Sign In
-              </button>
-
-              <button
-                onClick={() => { setTab('signup'); setErrorMsg(null); setSuccessMsg(null); }}
-                className={`px-3.5 py-2 rounded-xl transition-all ${
-                  tab === 'signup' ? 'bg-brand-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Register
-              </button>
-
-              <button
-                onClick={() => { setTab('sso'); setErrorMsg(null); setSuccessMsg(null); }}
-                className={`px-3.5 py-2 rounded-xl transition-all ${
-                  tab === 'sso' ? 'bg-brand-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Google / GitHub OAuth
-              </button>
-
-              <button
-                onClick={() => { setTab('forgot'); setErrorMsg(null); setSuccessMsg(null); }}
-                className={`px-3.5 py-2 rounded-xl transition-all ${
-                  tab === 'forgot' ? 'bg-brand-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Forgot Password
-              </button>
+          {/* Tab Navigation */}
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-white/[0.06] pb-4">
+            <div className="flex items-center gap-1 text-sm">
+              {[
+                { key: 'signin', label: 'Sign In' },
+                { key: 'signup', label: 'Register' },
+                { key: 'sso', label: 'SSO' },
+                { key: 'forgot', label: 'Reset Password' },
+              ].map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => { setTab(t.key as any); setErrorMsg(null); setSuccessMsg(null); }}
+                  className={`px-3 py-1.5 rounded-md transition-colors font-medium ${
+                    tab === t.key ? 'bg-brand-600 text-white' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
 
             <button
               onClick={handleGuestDemo}
-              className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:underline"
+              className="hidden sm:inline text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Guest Demo</span>
+              Try as guest
             </button>
           </div>
 
           {/* Feedback Alerts */}
           {errorMsg && (
-            <div className="p-3 rounded-2xl bg-rose-500/15 text-rose-400 text-xs font-bold text-center border border-rose-500/30 animate-fade-in">
+            <div className="p-3 rounded-lg bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-sm text-center border border-red-200 dark:border-red-500/20 animate-fade-in">
               {errorMsg}
             </div>
           )}
 
           {successMsg && (
-            <div className="p-3 rounded-2xl bg-emerald-500/15 text-emerald-300 text-xs font-bold text-center border border-emerald-500/30 animate-fade-in">
+            <div className="p-3 rounded-lg bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 text-sm text-center border border-green-200 dark:border-green-500/20 animate-fade-in">
               {successMsg}
             </div>
           )}
 
-          {/* TAB 1: SIGN IN PAGE */}
+          {/* SIGN IN */}
           {tab === 'signin' && (
             <form onSubmit={handleSignIn} className="space-y-4 animate-fade-in">
               <div>
-                <h2 className="text-xl font-extrabold text-white">Sign In to LexiRAG</h2>
-                <p className="text-xs text-slate-400 mt-1">Enter your work email and password to access your secure RAG dashboard.</p>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Welcome back</h2>
+                <p className="text-sm text-slate-500 mt-0.5">Sign in to your account to continue.</p>
               </div>
 
-              {/* OAuth Quick Buttons */}
-              <div className="grid grid-cols-2 gap-3 pb-2">
+              {/* OAuth */}
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => handleSSO('google')}
                   disabled={loading}
-                  className="py-2.5 px-3 rounded-xl bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
+                  className="py-2.5 px-3 rounded-lg bg-white dark:bg-white/[0.04] text-slate-800 dark:text-white hover:bg-slate-50 dark:hover:bg-white/[0.06] font-medium text-sm border border-slate-200 dark:border-white/[0.1] transition-colors flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -382,7 +340,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
                   type="button"
                   onClick={() => handleSSO('github')}
                   disabled={loading}
-                  className="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shadow-md border border-white/10 transition-all flex items-center justify-center gap-2"
+                  className="py-2.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm border border-slate-700 transition-colors flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
@@ -391,33 +349,33 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
                 </button>
               </div>
 
-              <div className="relative flex items-center justify-center my-2">
-                <div className="border-t border-white/10 w-full"></div>
-                <span className="bg-slate-900 px-3 text-[11px] text-slate-500 font-bold uppercase">or email</span>
+              <div className="relative flex items-center justify-center">
+                <div className="border-t border-slate-200 dark:border-white/[0.06] w-full"></div>
+                <span className="bg-white dark:bg-gray-900 px-3 text-[11px] text-slate-400 uppercase">or</span>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-300">Work Email Address</label>
+                <label className={labelClass}>Email</label>
                 <div className="relative">
                   <input
                     type="email"
                     required
-                    placeholder="alex.rivera@nexuscorp.com"
+                    placeholder="you@company.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className={inputClass}
                   />
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 </div>
               </div>
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-300">Password</label>
+                  <label className={labelClass}>Password</label>
                   <button
                     type="button"
                     onClick={() => { setTab('forgot'); setErrorMsg(null); }}
-                    className="text-[11px] font-bold text-brand-400 hover:underline"
+                    className="text-[11px] font-medium text-brand-600 dark:text-brand-400 hover:underline"
                   >
                     Forgot password?
                   </button>
@@ -429,162 +387,113 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className={inputClass}
                   />
-                  <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 </div>
               </div>
 
-              {/* Remember Me Checkbox */}
-              <div className="flex items-center gap-2 pt-1">
+              <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   id="rememberMe"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded bg-slate-950 border-white/20 text-brand-600 focus:ring-brand-500 h-4 w-4"
+                  className="rounded bg-white dark:bg-gray-800 border-slate-300 dark:border-white/20 text-brand-600 focus:ring-brand-500 h-3.5 w-3.5"
                 />
-                <label htmlFor="rememberMe" className="text-xs text-slate-300 cursor-pointer font-medium">
-                  Remember me on this device (30-day refresh token)
+                <label htmlFor="rememberMe" className="text-xs text-slate-500 cursor-pointer">
+                  Remember me
                 </label>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-brand-500/30 transition-all flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors flex items-center justify-center gap-2"
               >
-                <span>{loading ? 'Authenticating...' : 'Sign In to Workspace'}</span>
+                <span>{loading ? 'Signing in...' : 'Sign In'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
           )}
 
-          {/* TAB 2: REGISTER PAGE */}
+          {/* REGISTER */}
           {tab === 'signup' && (
             <form onSubmit={handleSignUp} className="space-y-3.5 animate-fade-in">
               <div>
-                <h2 className="text-xl font-extrabold text-white">Create Workspace Account</h2>
-                <p className="text-xs text-slate-400 mt-1">Set up a new organization or join your enterprise team scope.</p>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Create an account</h2>
+                <p className="text-sm text-slate-500 mt-0.5">Set up your workspace to get started.</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-300">Full Name</label>
+                  <label className={labelClass}>Full Name</label>
                   <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      placeholder="Alex Rivera"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    />
+                    <input type="text" required placeholder="Alex Rivera" value={name} onChange={(e) => setName(e.target.value)} className={smallInputClass} />
                     <UserIcon className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
                   </div>
                 </div>
-
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-300">Company Name</label>
+                  <label className={labelClass}>Company</label>
                   <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      placeholder="Nexus Corp"
-                      value={orgName}
-                      onChange={(e) => setOrgName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    />
+                    <input type="text" required placeholder="Acme Inc" value={orgName} onChange={(e) => setOrgName(e.target.value)} className={smallInputClass} />
                     <Building2 className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-300">Work Email</label>
+                <label className={labelClass}>Email</label>
                 <div className="relative">
-                  <input
-                    type="email"
-                    required
-                    placeholder="alex@nexuscorp.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  />
+                  <input type="email" required placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-300">Password</label>
+                  <label className={labelClass}>Password</label>
                   <div className="relative">
-                    <input
-                      type="password"
-                      required
-                      placeholder="Min 6 chars"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    />
+                    <input type="password" required placeholder="Min 6 chars" value={password} onChange={(e) => setPassword(e.target.value)} className={smallInputClass} />
                     <KeyRound className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
                   </div>
                 </div>
-
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-300">Confirm Password</label>
+                  <label className={labelClass}>Confirm</label>
                   <div className="relative">
-                    <input
-                      type="password"
-                      required
-                      placeholder="Repeat password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    />
+                    <input type="password" required placeholder="Repeat" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={smallInputClass} />
                     <KeyRound className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="agreeTerms"
-                  checked={agreeTerms}
-                  onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="rounded bg-slate-950 border-white/20 text-brand-600 focus:ring-brand-500 h-4 w-4"
-                />
-                <label htmlFor="agreeTerms" className="text-xs text-slate-300 cursor-pointer">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="agreeTerms" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="rounded bg-white dark:bg-gray-800 border-slate-300 dark:border-white/20 text-brand-600 focus:ring-brand-500 h-3.5 w-3.5" />
+                <label htmlFor="agreeTerms" className="text-xs text-slate-500 cursor-pointer">
                   I agree to the Terms of Service & Privacy Policy
                 </label>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-brand-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-brand-500/30 transition-all flex items-center justify-center gap-2"
-              >
-                <span>{loading ? 'Creating Account...' : 'Register Account & Organization'}</span>
+              <button type="submit" disabled={loading} className="w-full py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors flex items-center justify-center gap-2">
+                <span>{loading ? 'Creating account...' : 'Create Account'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
           )}
 
-          {/* TAB 3: OAUTH SSO PAGE */}
+          {/* SSO */}
           {tab === 'sso' && (
             <div className="space-y-5 animate-fade-in">
               <div>
-                <h2 className="text-xl font-extrabold text-white">Google & GitHub Single Sign-On</h2>
-                <p className="text-xs text-slate-400 mt-1">Authenticate instantly using your corporate Google Workspace or GitHub identity.</p>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Single Sign-On</h2>
+                <p className="text-sm text-slate-500 mt-0.5">Sign in with your existing work account.</p>
               </div>
 
               <div className="space-y-3">
-                {/* Google OAuth */}
                 <button
                   onClick={() => handleSSO('google')}
                   disabled={loading}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs shadow-md transition-all flex items-center justify-center gap-3 group cursor-pointer"
+                  className="w-full py-3 px-4 rounded-lg bg-white dark:bg-white/[0.04] text-slate-800 dark:text-white hover:bg-slate-50 dark:hover:bg-white/[0.06] font-medium text-sm border border-slate-200 dark:border-white/[0.1] transition-colors flex items-center justify-center gap-3"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -592,54 +501,41 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                   </svg>
-                  <span>Sign in with Google Workspace</span>
+                  <span>Continue with Google</span>
                 </button>
 
-                {/* GitHub Enterprise */}
                 <button
                   onClick={() => handleSSO('github')}
                   disabled={loading}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-3 group cursor-pointer border border-white/10"
+                  className="w-full py-3 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm transition-colors flex items-center justify-center gap-3 border border-slate-700"
                 >
                   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                   </svg>
-                  <span>Sign in with GitHub Enterprise</span>
+                  <span>Continue with GitHub</span>
                 </button>
               </div>
             </div>
           )}
 
-          {/* TAB 4: FORGOT PASSWORD PAGE */}
+          {/* FORGOT PASSWORD */}
           {tab === 'forgot' && (
             <div className="space-y-4 animate-fade-in">
               <div>
-                <h2 className="text-xl font-extrabold text-white">Reset Forgotten Password</h2>
-                <p className="text-xs text-slate-400 mt-1">Receive a 6-digit verification security code to set a new password.</p>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Reset password</h2>
+                <p className="text-sm text-slate-500 mt-0.5">We'll send a 6-digit code to your email.</p>
               </div>
 
               {forgotStep === 1 ? (
                 <form onSubmit={handleSendForgotPassword} className="space-y-3">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-300">Your Registered Work Email</label>
+                    <label className={labelClass}>Email</label>
                     <div className="relative">
-                      <input
-                        type="email"
-                        required
-                        placeholder="alex.rivera@nexuscorp.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-white/10 rounded-2xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                      />
-                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                      <input type="email" required placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
+                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                     </div>
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
-                  >
+                  <button type="submit" disabled={loading} className="w-full py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors flex items-center justify-center gap-2">
                     <span>Send Reset Code</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
@@ -647,13 +543,13 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
               ) : (
                 <form onSubmit={handleResetPassword} className="space-y-3.5">
                   {demoCodeNotice && (
-                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-mono text-center">
-                      🔑 Demo Reset Pin Code: <span className="font-bold tracking-widest text-sm">{demoCodeNotice}</span>
+                    <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-700 dark:text-amber-300 text-sm font-mono text-center">
+                      Demo code: <span className="font-semibold tracking-widest">{demoCodeNotice}</span>
                     </div>
                   )}
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-300">6-Digit Verification PIN Code</label>
+                    <label className={labelClass}>6-Digit Code</label>
                     <input
                       type="text"
                       required
@@ -661,58 +557,38 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
                       placeholder="123456"
                       value={resetCode}
                       onChange={(e) => setResetCode(e.target.value)}
-                      className="w-full py-3 text-center tracking-widest text-lg font-mono font-bold bg-slate-950 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="w-full py-2.5 text-center tracking-widest text-lg font-mono bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.1] rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-300">New Password</label>
-                      <input
-                        type="password"
-                        required
-                        placeholder="••••••••"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                      />
+                      <label className={labelClass}>New Password</label>
+                      <input type="password" required placeholder="••••••••" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full px-3 py-2.5 bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.1] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
                     </div>
-
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-300">Confirm New Password</label>
-                      <input
-                        type="password"
-                        required
-                        placeholder="••••••••"
-                        value={confirmNewPassword}
-                        onChange={(e) => setConfirmNewPassword(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-slate-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                      />
+                      <label className={labelClass}>Confirm</label>
+                      <input type="password" required placeholder="••••••••" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} className="w-full px-3 py-2.5 bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.1] rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
                     </div>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 text-white font-bold text-xs shadow-md transition-all"
-                  >
-                    {loading ? 'Updating Password...' : 'Reset Password & Access Dashboard'}
+                  <button type="submit" disabled={loading} className="w-full py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors">
+                    {loading ? 'Updating...' : 'Reset Password'}
                   </button>
                 </form>
               )}
             </div>
           )}
 
-          {/* Quick Demo Footer Action */}
-          <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
-            <span>Want an instant demo?</span>
+          {/* Footer */}
+          <div className="pt-4 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs text-slate-400">
+            <span>Need a quick look?</span>
             <button
               type="button"
               onClick={handleGuestDemo}
-              className="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 font-bold border border-amber-500/30 transition-all flex items-center gap-1.5"
+              className="font-medium text-brand-600 dark:text-brand-400 hover:underline"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Launch One-Click Guest Demo</span>
+              Try guest demo
             </button>
           </div>
 
@@ -723,4 +599,3 @@ export const AuthView: React.FC<AuthViewProps> = ({ onSuccess }) => {
     </div>
   );
 };
-

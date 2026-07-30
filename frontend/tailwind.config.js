@@ -7,31 +7,33 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
       colors: {
         brand: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-          950: '#172554',
+          50: '#f0fdfa',
+          100: '#ccfbf1',
+          200: '#99f6e4',
+          300: '#5eead4',
+          400: '#2dd4bf',
+          500: '#14b8a6',
+          600: '#0d9488',
+          700: '#0f766e',
+          800: '#115e59',
+          900: '#134e4a',
+          950: '#042f2e',
         },
         navy: {
-          800: '#0f172a',
-          900: '#0b1329',
-          950: '#050a18',
+          800: '#141720',
+          900: '#111318',
+          950: '#0c0d12',
         }
       },
       animation: {
-        'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'bounce-subtle': 'bounce 2s infinite',
-        'fade-in': 'fadeIn 0.3s ease-in-out forwards',
-        'slide-up': 'slideUp 0.3s ease-out forwards',
+        'fade-in': 'fadeIn 0.2s ease-out forwards',
+        'slide-up': 'slideUp 0.25s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -39,7 +41,7 @@ export default {
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         }
       }

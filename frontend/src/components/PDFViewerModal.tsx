@@ -82,30 +82,30 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/75 backdrop-blur-md animate-fade-in">
-      <div className="w-full max-w-5xl h-[90vh] glass-card bg-white dark:bg-navy-950 rounded-3xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl">
+      <div className="w-full max-w-5xl h-[90vh] bg-white dark:bg-gray-900 rounded-xl flex flex-col overflow-hidden border border-slate-200 dark:border-white/[0.06] shadow-lg">
         
         {/* Top Viewer Control Bar */}
-        <div className="p-4 bg-slate-100/90 dark:bg-navy-900 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+        <div className="p-4 bg-slate-100/90 dark:bg-white/[0.04] border-b border-slate-200 dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
           
           {/* Document Title & Badge */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xs">
+            <div className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-medium text-xs">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <div className="font-extrabold text-sm text-slate-900 dark:text-white truncate max-w-xs sm:max-w-md">
+              <div className="font-semibold text-sm text-slate-900 dark:text-white truncate max-w-xs sm:max-w-md">
                 {document.filename}
               </div>
-              <div className="text-[10px] text-slate-400 font-mono flex items-center gap-2">
+              <div className="text-[11px] text-slate-400 font-mono flex items-center gap-2">
                 <span>PDF Source Document</span>
                 <span>•</span>
-                <span className="text-emerald-500 font-bold">256-Bit Encrypted Vault</span>
+                <span className="text-emerald-500 font-medium">256-Bit Encrypted Vault</span>
               </div>
             </div>
           </div>
 
           {/* Page Navigation Controls */}
-          <div className="flex items-center gap-2 bg-white dark:bg-navy-950 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs">
+          <div className="flex items-center gap-2 bg-white dark:bg-gray-900 p-1.5 rounded-lg border border-slate-200 dark:border-white/[0.06] text-xs">
             <button
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage <= 1}
@@ -115,7 +115,7 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            <span className="font-bold font-mono text-slate-800 dark:text-slate-200 px-2">
+            <span className="font-medium font-mono text-slate-800 dark:text-slate-200 px-2">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -131,7 +131,7 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
 
           {/* Zoom Controls & Close */}
           <div className="flex items-center gap-2">
-            <div className="hidden sm:flex items-center gap-1 bg-white dark:bg-navy-950 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs">
+            <div className="hidden sm:flex items-center gap-1 bg-white dark:bg-gray-900 p-1.5 rounded-lg border border-slate-200 dark:border-white/[0.06] text-xs">
               <button
                 onClick={() => setZoom(Math.max(75, zoom - 15))}
                 className="p-1 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
@@ -139,7 +139,7 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
               >
                 <ZoomOut className="w-3.5 h-3.5" />
               </button>
-              <span className="font-mono text-[11px] font-bold px-1 text-slate-700 dark:text-slate-300">{zoom}%</span>
+              <span className="font-mono text-[11px] font-medium px-1 text-slate-700 dark:text-slate-300">{zoom}%</span>
               <button
                 onClick={() => setZoom(Math.min(150, zoom + 15))}
                 className="p-1 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
@@ -151,7 +151,7 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-slate-200 dark:bg-white/[0.05] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -164,27 +164,27 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
           
           {/* Left Panel: Target Citation & Grounding Info */}
           {citation && (
-            <div className="w-full lg:w-80 bg-slate-50 dark:bg-navy-900/60 p-5 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800 space-y-4 overflow-y-auto">
-              <div className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+            <div className="w-full lg:w-80 bg-slate-50 dark:bg-white/[0.04]/60 p-5 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-white/[0.06] space-y-4 overflow-y-auto">
+              <div className="flex items-center gap-2 text-xs font-medium text-amber-600 dark:text-amber-400 uppercase tracking-wider">
                 <Sparkles className="w-4 h-4 text-amber-500" />
                 <span>Verified RAG Citation Highlight</span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold">
+              <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/25 space-y-2">
+                <div className="flex items-center justify-between text-xs font-medium">
                   <span className="text-amber-800 dark:text-amber-300">{citation.clause_number}</span>
-                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-200 text-[10px] font-mono">
+                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-200 text-[11px] font-mono">
                     Page {citation.page_number}
                   </span>
                 </div>
 
-                <div className="text-xs text-slate-700 dark:text-slate-300 font-mono leading-relaxed bg-white/80 dark:bg-navy-950/80 p-3 rounded-xl border border-amber-500/20">
+                <div className="text-xs text-slate-700 dark:text-slate-300 font-mono leading-relaxed bg-white/80 dark:bg-gray-900/80 p-3 rounded-xl border border-amber-500/20">
                   "{citation.snippet}"
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] pt-1">
                   <span className="text-slate-500">Match Confidence:</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                  <span className="font-medium text-emerald-600 dark:text-emerald-400 font-mono">
                     {Math.round((citation.confidence || 0.95) * 100)}%
                   </span>
                 </div>
@@ -193,7 +193,7 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
               <div className="space-y-2">
                 <button
                   onClick={handleCopySnippet}
-                  className="w-full py-2.5 rounded-xl bg-slate-200/80 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-xl bg-slate-200/80 dark:bg-white/[0.05] hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium text-xs transition-colors flex items-center justify-center gap-2"
                 >
                   {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                   <span>{copied ? 'Copied Highlighted Text' : 'Copy Source Text'}</span>
@@ -201,15 +201,15 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
 
                 <button
                   onClick={() => setCurrentPage(citation.page_number)}
-                  className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs shadow-md transition-colors flex items-center justify-center gap-2"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span>Jump to Citation Page ({citation.page_number})</span>
                 </button>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-200/50 dark:bg-navy-950/50 text-[11px] text-slate-500 space-y-1">
-                <div className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+              <div className="p-3 rounded-xl bg-slate-200/50 dark:bg-gray-900/50 text-[11px] text-slate-500 space-y-1">
+                <div className="font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
                   ChatGPT-Style Grounded Citation
                 </div>
@@ -221,21 +221,21 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
           )}
 
           {/* Right Area: PDF Page Canvas with Highlighting */}
-          <div className="flex-1 overflow-y-auto p-6 sm:p-10 flex justify-center bg-slate-200/60 dark:bg-navy-950/90">
+          <div className="flex-1 overflow-y-auto p-6 sm:p-10 flex justify-center bg-slate-200/60 dark:bg-gray-900/90">
             
             {/* Simulated Paper Sheet */}
             <div
-              className="w-full max-w-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-xl p-8 sm:p-12 shadow-2xl border border-slate-300 dark:border-slate-800 space-y-6 transition-transform origin-top"
+              className="w-full max-w-2xl bg-white dark:bg-white/[0.03] text-slate-900 dark:text-slate-100 rounded-xl p-8 sm:p-12 shadow-lg border border-slate-300 dark:border-white/[0.06] space-y-6 transition-transform origin-top"
               style={{ transform: `scale(${zoom / 100})` }}
             >
               {/* Header Page Title */}
-              <div className="border-b border-slate-200 dark:border-slate-800 pb-4 flex justify-between items-center text-xs text-slate-400 font-mono">
+              <div className="border-b border-slate-200 dark:border-white/[0.06] pb-4 flex justify-between items-center text-xs text-slate-400 font-mono">
                 <span>DOCUMENT REF: {document.id.toUpperCase()}</span>
                 <span>PAGE {currentPage} OF {totalPages}</span>
               </div>
 
               {/* Clause Heading */}
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white border-l-4 border-brand-500 pl-3">
+              <h2 className="text-lg font-medium text-slate-900 dark:text-white border-l-4 border-brand-500 pl-3">
                 {pageData.clauseTitle}
               </h2>
 
@@ -247,8 +247,8 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
                   if (isHighlighted || (citation && currentPage === citation.page_number && idx === 3)) {
                     return (
                       <div key={idx} className="relative group my-2">
-                        <mark className="block p-4 bg-amber-300/90 dark:bg-amber-400/30 text-amber-950 dark:text-amber-100 rounded-2xl ring-4 ring-amber-400/40 shadow-lg border border-amber-400 font-sans font-medium text-sm sm:text-base leading-relaxed animate-pulse-subtle">
-                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 mb-2 rounded bg-amber-500 text-white text-[10px] font-bold uppercase font-mono shadow-sm">
+                        <mark className="block p-4 bg-amber-300/90 dark:bg-amber-400/30 text-amber-950 dark:text-amber-100 rounded-lg ring-4 ring-amber-400/40 shadow-lg border border-amber-400 font-sans font-medium text-sm sm:text-base leading-relaxed-subtle">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 mb-2 rounded bg-amber-500 text-white text-[11px] font-medium uppercase font-mono shadow-sm">
                             <Sparkles className="w-3 h-3" />
                             AI Citation Match
                           </span>
@@ -268,7 +268,7 @@ export const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
               </div>
 
               {/* Footer Page Bar */}
-              <div className="pt-8 border-t border-slate-200 dark:border-slate-800 text-[10px] text-slate-400 font-mono flex justify-between">
+              <div className="pt-8 border-t border-slate-200 dark:border-white/[0.06] text-[11px] text-slate-400 font-mono flex justify-between">
                 <span>CONFIDENTIAL & PROPRIETARY</span>
                 <span>LEXIRAG AI PDF RAG ENGINE</span>
               </div>

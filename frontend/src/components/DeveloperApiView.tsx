@@ -137,37 +137,37 @@ print(response.json())`;
     <div className="max-w-6xl mx-auto space-y-8 pb-12 animate-fade-in">
       
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-navy-950 to-indigo-950 p-8 border border-slate-800 text-white shadow-2xl">
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-slate-900 via-navy-950 to-indigo-950 p-8 border border-white/[0.06] text-white shadow-lg">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-xs font-semibold border border-brand-500/30 mb-3">
               <Code2 className="w-3.5 h-3.5" />
               Public REST API & Developer SDKs
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Public REST API & Integration Hub</h1>
+            <h1 className="text-3xl font-semibold tracking-tight">Public REST API & Integration Hub</h1>
             <p className="text-slate-400 mt-1 max-w-xl text-sm leading-relaxed">
-              Integrate LexiRAG AI directly into external enterprise software, CRMs, and ERPs using our REST API endpoints (`/upload`, `/query`, `/risk`, `/summary`).
+              Integrate LexiRAG AI directly into external software, CRMs, and ERPs using our REST API endpoints (`/upload`, `/query`, `/risk`, `/summary`).
             </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-slate-800/80 backdrop-blur border border-slate-700/80 p-3 rounded-2xl">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-xs font-mono font-bold text-emerald-400">API Endpoint Online (v1.0)</span>
+          <div className="flex items-center gap-2 bg-slate-800/80 backdrop-blur border border-white/[0.08]/80 p-3 rounded-lg">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span className="text-xs font-mono font-medium text-emerald-400">API Endpoint Online (v1.0)</span>
           </div>
         </div>
       </div>
 
       {/* API Key Management Box */}
-      <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+      <div className="p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5 text-slate-900 dark:text-white font-black text-base">
+          <div className="flex items-center gap-2.5 text-slate-900 dark:text-white font-semibold text-base">
             <Key className="w-5 h-5 text-amber-500" />
             <span>Developer Public API Key</span>
           </div>
 
           <button
             onClick={generateNewKey}
-            className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-white/[0.05] hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium transition-all border border-slate-200 dark:border-white/[0.08] flex items-center gap-1.5"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Roll New Key</span>
@@ -179,12 +179,12 @@ print(response.json())`;
             type="text"
             readOnly
             value={apiKey}
-            className="w-full px-4 py-3 text-xs font-mono bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-2xl text-brand-600 dark:text-brand-400 font-extrabold focus:outline-none"
+            className="w-full px-4 py-3 text-xs font-mono bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] rounded-lg text-brand-600 dark:text-brand-400 font-semibold focus:outline-none"
           />
 
           <button
             onClick={() => copyCode(apiKey)}
-            className="px-4 py-3 rounded-2xl bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-xs font-bold border border-brand-500/20 transition-all flex items-center gap-1.5 whitespace-nowrap"
+            className="px-4 py-3 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-xs font-medium border border-brand-500/15 transition-all flex items-center gap-1.5 whitespace-nowrap"
           >
             {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
             <span>{copied ? 'Copied Key!' : 'Copy API Key'}</span>
@@ -193,10 +193,10 @@ print(response.json())`;
       </div>
 
       {/* Endpoint Selector & Code Snippet Display */}
-      <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
+      <div className="p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm space-y-6">
         
         {/* Endpoint Selector Tabs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-white/[0.06] pb-4">
           <div className="flex items-center gap-2 overflow-x-auto">
             {[
               { id: 'query', label: 'POST /query', icon: Send },
@@ -212,10 +212,10 @@ print(response.json())`;
                     setActiveTab(ep.id as any);
                     setApiResponse(null);
                   }}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                     activeTab === ep.id
-                      ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                      ? 'bg-brand-500 text-white shadow-sm'
+                      : 'bg-slate-100 dark:bg-white/[0.05] text-slate-600 dark:text-slate-300 hover:bg-slate-200'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -226,19 +226,19 @@ print(response.json())`;
           </div>
 
           {/* Language Switcher (cURL vs Python) */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/[0.05] p-1 rounded-xl border border-slate-200 dark:border-white/[0.08]">
             <button
               onClick={() => setActiveLang('curl')}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
-                activeLang === 'curl' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-400'
+              className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
+                activeLang === 'curl' ? 'bg-white dark:bg-white/[0.03] text-slate-900 dark:text-white shadow-sm' : 'text-slate-400'
               }`}
             >
               cURL
             </button>
             <button
               onClick={() => setActiveLang('python')}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
-                activeLang === 'python' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-400'
+              className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
+                activeLang === 'python' ? 'bg-white dark:bg-white/[0.03] text-slate-900 dark:text-white shadow-sm' : 'text-slate-400'
               }`}
             >
               Python
@@ -247,12 +247,12 @@ print(response.json())`;
         </div>
 
         {/* Code Snippet Viewer */}
-        <div className="relative rounded-2xl bg-slate-950 p-5 border border-slate-800 text-slate-200 font-mono text-xs overflow-x-auto shadow-xl">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-slate-400 text-[10px]">
+        <div className="relative rounded-lg bg-gray-950 p-5 border border-white/[0.06] text-slate-200 font-mono text-xs overflow-x-auto shadow-md">
+          <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] text-slate-400 text-[11px]">
             <span>{activeLang === 'curl' ? 'cURL Command' : 'Python 3 SDK Snippet'}</span>
             <button
               onClick={() => copyCode(codeSnippet)}
-              className="hover:text-white transition-colors flex items-center gap-1 font-bold"
+              className="hover:text-white transition-colors flex items-center gap-1 font-medium"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copied!' : 'Copy Code'}</span>
@@ -267,7 +267,7 @@ print(response.json())`;
             <button
               onClick={handleTestApi}
               disabled={isTesting}
-              className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-xs shadow-md transition-all flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs shadow-md transition-all flex items-center gap-1.5"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{isTesting ? 'Sending Request...' : `Test ${activeTab.toUpperCase()} Endpoint Live ▶`}</span>
@@ -277,12 +277,12 @@ print(response.json())`;
 
         {/* Interactive Response Payload Viewer */}
         {apiResponse && (
-          <div className="p-5 rounded-2xl bg-slate-900 border border-emerald-500/30 text-emerald-300 font-mono text-xs space-y-2 animate-in fade-in">
-            <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center justify-between">
+          <div className="p-5 rounded-lg bg-slate-900 border border-emerald-500/30 text-emerald-300 font-mono text-xs space-y-2 animate-in fade-in">
+            <div className="text-[11px] font-medium text-emerald-400 uppercase tracking-wider flex items-center justify-between">
               <span>HTTP 200 OK — Live REST Response JSON:</span>
               <span>application/json</span>
             </div>
-            <pre className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-slate-200 text-[11px] overflow-x-auto leading-relaxed">
+            <pre className="p-3 bg-gray-950 rounded-xl border border-white/[0.06] text-slate-200 text-[11px] overflow-x-auto leading-relaxed">
               {apiResponse}
             </pre>
           </div>

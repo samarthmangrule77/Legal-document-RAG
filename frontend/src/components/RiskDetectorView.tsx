@@ -102,13 +102,13 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
     <div className="space-y-8 animate-fade-in pb-12">
       
       {/* Header Selector & Contract Picker */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-rose-500 uppercase tracking-wider">
-            <AlertOctagon className="w-4 h-4 animate-pulse" />
+          <div className="flex items-center gap-2 text-xs font-medium text-rose-500 uppercase tracking-wider">
+            <AlertOctagon className="w-4 h-4" />
             <span>AI Red Flags & Risk Audit</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">
             {doc?.filename || 'Select Contract'}
           </h1>
         </div>
@@ -121,7 +121,7 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
               const found = documents.find(d => d.id === e.target.value);
               if (found) onSelectDoc(found);
             }}
-            className="px-3.5 py-2 text-xs font-bold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+            className="px-3.5 py-2 text-xs font-medium bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
           >
             {documents.map((d) => (
               <option key={d.id} value={d.id}>{d.filename}</option>
@@ -134,9 +134,9 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Card 1: Critical Red Flags 🔴 */}
-        <div className="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent border-2 border-rose-500/30 dark:border-rose-500/40 shadow-lg shadow-rose-500/5 flex flex-col justify-between">
+        <div className="relative overflow-hidden p-6 rounded-xl bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent border-2 border-rose-500/30 dark:border-rose-500/40 shadow-lg shadow-rose-500/5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
               Critical Red Flags
             </span>
@@ -144,10 +144,10 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
           </div>
 
           <div className="my-4">
-            <div className="text-4xl font-black text-rose-600 dark:text-rose-400">
+            <div className="text-4xl font-semibold text-rose-600 dark:text-rose-400">
               {criticalCount}
             </div>
-            <div className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1">
+            <div className="text-xs font-medium text-slate-700 dark:text-slate-200 mt-1">
               High Legal Exposure & Unlimited Liability
             </div>
           </div>
@@ -158,9 +158,9 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
         </div>
 
         {/* Card 2: Medium Red Flags 🟠 */}
-        <div className="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-500/30 dark:border-amber-500/40 shadow-lg shadow-amber-500/5 flex flex-col justify-between">
+        <div className="relative overflow-hidden p-6 rounded-xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-500/30 dark:border-amber-500/40 shadow-lg shadow-amber-500/5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
               Medium Red Flags
             </span>
@@ -168,10 +168,10 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
           </div>
 
           <div className="my-4">
-            <div className="text-4xl font-black text-amber-600 dark:text-amber-400">
+            <div className="text-4xl font-semibold text-amber-600 dark:text-amber-400">
               {mediumCount}
             </div>
-            <div className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1">
+            <div className="text-xs font-medium text-slate-700 dark:text-slate-200 mt-1">
               Missing Termination & Auto-Renewal Windows
             </div>
           </div>
@@ -182,9 +182,9 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
         </div>
 
         {/* Card 3: Low Risk / Compliant Clauses 🟢 */}
-        <div className="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border-2 border-emerald-500/30 dark:border-emerald-500/40 shadow-lg shadow-emerald-500/5 flex flex-col justify-between">
+        <div className="relative overflow-hidden p-6 rounded-xl bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border-2 border-emerald-500/30 dark:border-emerald-500/40 shadow-lg shadow-emerald-500/5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
               Low Risk / Compliant
             </span>
@@ -192,10 +192,10 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
           </div>
 
           <div className="my-4">
-            <div className="text-4xl font-black text-emerald-600 dark:text-emerald-400">
+            <div className="text-4xl font-semibold text-emerald-600 dark:text-emerald-400">
               {lowCount}
             </div>
-            <div className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1">
+            <div className="text-xs font-medium text-slate-700 dark:text-slate-200 mt-1">
               Standard Confidentiality & Dispute Scope
             </div>
           </div>
@@ -212,7 +212,7 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-rose-500" />
               <span>AI Red Flags Breakdown ({filteredRisks.length})</span>
             </h2>
@@ -222,12 +222,12 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
           </div>
 
           {/* Color-Coded Filter Pill Buttons */}
-          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-x-auto">
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/[0.05] p-1.5 rounded-lg border border-slate-200 dark:border-white/[0.08] overflow-x-auto">
             <button
               onClick={() => setFilterSeverity('all')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                 filterSeverity === 'all'
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                  ? 'bg-white dark:bg-white/[0.03] text-slate-900 dark:text-white shadow-sm'
                   : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -235,7 +235,7 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
             </button>
             <button
               onClick={() => setFilterSeverity('critical')}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                 filterSeverity === 'critical'
                   ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20'
                   : 'text-rose-600 dark:text-rose-400 hover:bg-rose-500/10'
@@ -246,7 +246,7 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
             </button>
             <button
               onClick={() => setFilterSeverity('medium')}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                 filterSeverity === 'medium'
                   ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20'
                   : 'text-amber-600 dark:text-amber-400 hover:bg-amber-500/10'
@@ -257,7 +257,7 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
             </button>
             <button
               onClick={() => setFilterSeverity('low')}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                 filterSeverity === 'low'
                   ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
                   : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10'
@@ -272,9 +272,9 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
         {/* Detailed Red Flag Cards Grid */}
         <div className="space-y-4">
           {filteredRisks.length === 0 ? (
-            <div className="p-12 text-center rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-400 space-y-2">
+            <div className="p-12 text-center rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] text-slate-400 space-y-2">
               <ShieldCheck className="w-10 h-10 text-emerald-500 mx-auto" />
-              <div className="text-sm font-extrabold text-slate-700 dark:text-slate-200">No Red Flags Found for Selected Filter</div>
+              <div className="text-sm font-semibold text-slate-700 dark:text-slate-200">No Red Flags Found for Selected Filter</div>
               <div className="text-xs text-slate-400">Try selecting "All Red Flags" to view full legal audit.</div>
             </div>
           ) : (
@@ -286,22 +286,22 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
               return (
                 <div
                   key={item.id}
-                  className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border-l-4 shadow-sm transition-all hover:shadow-md space-y-4 ${
+                  className={`p-6 rounded-xl bg-white dark:bg-white/[0.03] border-l-4 shadow-sm transition-all hover:shadow-md space-y-4 ${
                     isCritical
-                      ? 'border-l-rose-500 border-slate-200/80 dark:border-slate-800'
+                      ? 'border-l-rose-500 border-slate-200 dark:border-white/[0.06]'
                       : isMedium
-                      ? 'border-l-amber-500 border-slate-200/80 dark:border-slate-800'
-                      : 'border-l-emerald-500 border-slate-200/80 dark:border-slate-800'
+                      ? 'border-l-amber-500 border-slate-200 dark:border-white/[0.06]'
+                      : 'border-l-emerald-500 border-slate-200 dark:border-white/[0.06]'
                   }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                      <h3 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                         {item.title}
                       </h3>
                     </div>
 
-                    <span className={`px-3 py-1 rounded-full text-xs font-black self-start sm:self-auto border ${
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto border ${
                       isCritical
                         ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30'
                         : isMedium
@@ -317,25 +317,25 @@ export const RiskDetectorView: React.FC<RiskDetectorViewProps> = ({
                   </p>
 
                   <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500 dark:text-slate-400">
-                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08]">
                       📍 {item.clause_ref || 'Clause Reference'}
                     </span>
                     {item.page_number && (
-                      <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                      <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08]">
                         📄 Page {item.page_number}
                       </span>
                     )}
                   </div>
 
                   {/* AI Recommendation Box */}
-                  <div className={`p-4 rounded-2xl border text-xs space-y-1 ${
+                  <div className={`p-4 rounded-lg border text-xs space-y-1 ${
                     isCritical
                       ? 'bg-rose-500/5 border-rose-500/20 text-rose-900 dark:text-rose-200'
                       : isMedium
                       ? 'bg-amber-500/5 border-amber-500/20 text-amber-900 dark:text-amber-200'
                       : 'bg-emerald-500/5 border-emerald-500/20 text-emerald-900 dark:text-emerald-200'
                   }`}>
-                    <div className="font-extrabold flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+                    <div className="font-semibold flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
                       <Sparkles className="w-3.5 h-3.5" />
                       AI Legal Action Recommendation:
                     </div>

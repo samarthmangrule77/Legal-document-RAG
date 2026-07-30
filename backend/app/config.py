@@ -7,6 +7,12 @@ class Settings:
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
+    # PostgreSQL Database Configuration
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", 
+        "postgresql://postgres:postgres@localhost:5432/lexirag"
+    )
+
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     EMBEDDING_MODEL_NAME: str = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
     UPLOAD_DIR: str = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")

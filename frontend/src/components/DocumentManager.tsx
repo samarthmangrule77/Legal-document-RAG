@@ -110,13 +110,13 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
       {/* Free Plan Quota Reached Banner */}
       {isQuotaReached && (
-        <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-brand-500/15 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="p-5 rounded-lg bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-brand-500/15 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
               <AlertCircle className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                 Free Plan Quota Limit Reached (5/5 PDFs Used)
               </h4>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
@@ -126,7 +126,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
           </div>
           <button
             onClick={() => setActiveTab('billing')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-brand-500/25 transition-all flex-shrink-0"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs shadow-md shadow-brand-500/25 transition-all flex-shrink-0"
           >
             <span>Upgrade to Pro</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -137,7 +137,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white tracking-tight">
             Document Repository & RAG Indexing
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -145,7 +145,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 text-xs font-semibold">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/15 text-xs font-semibold">
           <Layers className="w-4 h-4" />
           <span>{documents.length} Active Documents Indexed</span>
         </div>
@@ -156,20 +156,20 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleFileDrop}
-        className={`relative overflow-hidden p-8 sm:p-12 rounded-3xl border-2 border-dashed transition-all text-center ${
+        className={`relative overflow-hidden p-8 sm:p-12 rounded-xl border-2 border-dashed transition-all text-center ${
           isDragging
             ? 'border-brand-500 bg-brand-500/10 scale-[1.01]'
-            : 'border-slate-300 dark:border-slate-700/80 bg-slate-50/50 dark:bg-navy-900/40 hover:border-brand-400'
+            : 'border-slate-300 dark:border-white/[0.08]/80 bg-slate-50/50 dark:bg-white/[0.04]/40 hover:border-brand-400'
         }`}
       >
         {isUploading ? (
           <div className="space-y-6 max-w-md mx-auto py-4">
-            <div className="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-600 dark:text-brand-400 mx-auto flex items-center justify-center animate-pulse">
+            <div className="w-14 h-14 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 mx-auto flex items-center justify-center">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
 
             <div className="space-y-2">
-              <div className="text-base font-bold text-slate-800 dark:text-slate-100">
+              <div className="text-base font-medium text-slate-800 dark:text-slate-100">
                 Processing RAG Pipeline...
               </div>
               <div className="text-xs text-brand-600 dark:text-brand-400 font-medium">
@@ -178,7 +178,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full h-3 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div className="w-full h-3 rounded-full bg-slate-200 dark:bg-white/[0.05] overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-brand-600 to-indigo-500 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
@@ -188,12 +188,12 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
           </div>
         ) : (
           <div className="space-y-4 max-w-lg mx-auto">
-            <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white mx-auto flex items-center justify-center shadow-lg shadow-brand-500/30 transform hover:scale-105 transition-transform">
+            <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white mx-auto flex items-center justify-center shadow-md transform hover:scale-105 transition-transform">
               <UploadCloud className="w-8 h-8" />
             </div>
 
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+              <h2 className="text-lg font-medium text-slate-900 dark:text-white">
                 Drag & Drop Legal Document Here
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -202,7 +202,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
             </div>
 
             <div className="pt-2">
-              <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-md cursor-pointer transition-all">
+              <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-md cursor-pointer transition-all">
                 <FileText className="w-4 h-4" />
                 <span>Browse Files</span>
                 <input
@@ -218,8 +218,8 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
       </div>
 
       {/* Document List */}
-      <div className="glass-card p-6 rounded-3xl space-y-6 border border-slate-200/80 dark:border-slate-800">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center justify-between">
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl space-y-6 border border-slate-200 dark:border-white/[0.06]">
+        <h2 className="text-lg font-medium text-slate-900 dark:text-white flex items-center justify-between">
           <span>Indexed Legal Repository</span>
           <span className="text-xs font-normal text-slate-400">Click any document to inspect RAG clauses</span>
         </h2>
@@ -228,20 +228,20 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="p-5 rounded-2xl bg-slate-50 dark:bg-navy-900/50 hover:bg-slate-100/80 dark:hover:bg-navy-900 border border-slate-200/60 dark:border-slate-800 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="p-5 rounded-lg bg-slate-50 dark:bg-white/[0.04]/50 hover:bg-slate-100/80 dark:hover:bg-navy-900 border border-slate-200/60 dark:border-white/[0.06] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500/20 to-indigo-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-extrabold text-sm uppercase flex-shrink-0">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-500/20 to-indigo-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-semibold text-sm uppercase flex-shrink-0">
                   {doc.file_type}
                 </div>
 
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base">
+                    <h3 className="font-medium text-slate-900 dark:text-slate-100 text-base">
                       {doc.filename}
                     </h3>
                     {doc.is_scanned_ocr && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
                         <Scan className="w-3 h-3" />
                         OCR Processed
                       </span>
@@ -262,7 +262,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
               <div className="flex items-center gap-3">
                 
                 {/* Risk Score */}
-                <div className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border ${
+                <div className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 border ${
                   doc.risk_score >= 60
                     ? 'bg-rose-500/10 text-rose-600 border-rose-500/20'
                     : doc.risk_score >= 35
@@ -275,7 +275,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
                 <button
                   onClick={() => setSelectedPreviewDoc(doc)}
-                  className="p-2.5 rounded-xl bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
+                  className="p-2.5 rounded-xl bg-slate-200/70 dark:bg-white/[0.05] text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
                   title="View Contract Clauses"
                 >
                   <Eye className="w-4 h-4" />
@@ -286,7 +286,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
                     onSelectDoc(doc);
                     setActiveTab('chat');
                   }}
-                  className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all flex items-center gap-1.5 shadow-md shadow-brand-500/20"
+                  className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs transition-all flex items-center gap-1.5 shadow-sm"
                 >
                   <span>Ask RAG</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -301,11 +301,11 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
       {/* Document Clause Inspection Modal */}
       {selectedPreviewDoc && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-3xl max-h-[85vh] glass-card bg-white dark:bg-navy-950 rounded-3xl p-6 sm:p-8 space-y-6 overflow-y-auto border border-slate-200 dark:border-slate-800 shadow-2xl">
+          <div className="w-full max-w-3xl max-h-[85vh] bg-white dark:bg-gray-900 rounded-xl p-6 sm:p-8 space-y-6 overflow-y-auto border border-slate-200 dark:border-white/[0.06] shadow-lg">
             
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/[0.06] pb-4">
               <div>
-                <h3 className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                   <FileText className="w-5 h-5 text-brand-500" />
                   <span>{selectedPreviewDoc.filename}</span>
                 </h3>
@@ -316,15 +316,15 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
               <button
                 onClick={() => setSelectedPreviewDoc(null)}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/[0.05] text-slate-600 dark:text-slate-300 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-700"
               >
                 Close
               </button>
             </div>
 
             {/* Executive Summary */}
-            <div className="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/20 space-y-2">
-              <div className="text-xs font-bold text-brand-700 dark:text-brand-300 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="p-4 rounded-lg bg-brand-500/10 border border-brand-500/15 space-y-2">
+              <div className="text-xs font-medium text-brand-700 dark:text-brand-300 uppercase tracking-wider flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4" />
                 Executive Summary
               </div>
@@ -335,12 +335,12 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
             {/* Clauses / Risks preview */}
             <div className="space-y-3">
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white">Detected Contract Clauses & Risks</h4>
+              <h4 className="text-sm font-medium text-slate-900 dark:text-white">Detected Contract Clauses & Risks</h4>
               {selectedPreviewDoc.risks?.map((risk) => (
-                <div key={risk.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-navy-900/60 border border-slate-200 dark:border-slate-800 space-y-1.5">
+                <div key={risk.id} className="p-4 rounded-lg bg-slate-50 dark:bg-white/[0.04]/60 border border-slate-200 dark:border-white/[0.06] space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{risk.title}</span>
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                    <span className="text-xs font-medium text-slate-800 dark:text-slate-200">{risk.title}</span>
+                    <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${
                       risk.severity === 'high' ? 'bg-rose-500/15 text-rose-600' : 'bg-amber-500/15 text-amber-600'
                     }`}>
                       {risk.severity.toUpperCase()} SEVERITY
@@ -357,15 +357,15 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
 
       {/* Quota Exceeded Modal */}
       {quotaErrorModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 space-y-5 border border-slate-200 dark:border-slate-800 shadow-2xl">
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 text-rose-500 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/70 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-white/[0.03] rounded-xl p-6 space-y-5 border border-slate-200 dark:border-white/[0.06] shadow-lg">
+            <div className="w-12 h-12 rounded-lg bg-rose-500/15 text-rose-500 flex items-center justify-center">
               <AlertCircle className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-900 dark:text-white">Free Plan Limit Reached</h3>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Free Plan Limit Reached</h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                Free Plan is capped at 5 PDFs. You currently have <span className="font-bold text-slate-800 dark:text-slate-200">{documents.length} PDFs</span> indexed. Upgrade to Pro for unlimited document uploads.
+                Free Plan is capped at 5 PDFs. You currently have <span className="font-medium text-slate-800 dark:text-slate-200">{documents.length} PDFs</span> indexed. Upgrade to Pro for unlimited document uploads.
               </p>
             </div>
             <div className="flex items-center justify-end gap-3 pt-2">
@@ -380,7 +380,7 @@ export const DocumentManager: React.FC<DocumentManagerProps> = ({
                   setQuotaErrorModal(false);
                   setActiveTab('billing');
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-brand-500/25"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium shadow-md shadow-brand-500/25"
               >
                 <span>Upgrade to Pro</span>
                 <ArrowRight className="w-3.5 h-3.5" />

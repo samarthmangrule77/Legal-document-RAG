@@ -88,13 +88,13 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
     <div className="space-y-8 animate-fade-in pb-12">
       
       {/* Search Header */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
+      <div className="p-6 sm:p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm space-y-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-extrabold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
             <Sparkles className="w-4 h-4" />
             <span>Dense Vector Semantic Search & Faceted Filtering</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white mt-1">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">
             Natural Language Legal Clause Finder
           </h1>
           <p className="text-xs text-slate-500">
@@ -111,14 +111,14 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="Type a legal concept (e.g. 'resignation notice requirements' or 'indemnification liability cap')..."
-              className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+              className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-lg text-slate-900 dark:text-slate-100 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/40"
             />
             <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-4" />
           </div>
 
           <button
             onClick={handleSearch}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-brand-500/25 transition-all whitespace-nowrap flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs shadow-md transition-all whitespace-nowrap flex items-center justify-center gap-2"
           >
             <Search className="w-4 h-4" />
             <span>Search Vectors</span>
@@ -126,8 +126,8 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
         </div>
 
         {/* Multi-Facet Filter Bar Grid (Date | Risk | Doc Type | Clause | Dept | Author | Tags) */}
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+        <div className="pt-4 border-t border-slate-100 dark:border-white/[0.06] space-y-3">
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-400 uppercase tracking-wider">
             <Filter className="w-3.5 h-3.5 text-brand-500" />
             <span>Multi-Facet Metadata Filters:</span>
           </div>
@@ -136,11 +136,11 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
             
             {/* 1. Date Range Filter */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 block mb-1">📅 Date Range</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">📅 Date Range</label>
               <select
                 value={filterDate}
                 onChange={(e) => setFilterDate(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
               >
                 <option value="all">All Time</option>
                 <option value="30days">Last 30 Days</option>
@@ -151,11 +151,11 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
 
             {/* 2. Risk Level Filter */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 block mb-1">🔴 Risk Level</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">🔴 Risk Level</label>
               <select
                 value={filterRisk}
                 onChange={(e) => setFilterRisk(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
               >
                 <option value="all">All Risk Levels</option>
                 <option value="critical">🔴 Critical</option>
@@ -166,11 +166,11 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
 
             {/* 3. Document Type Filter */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 block mb-1">📄 Doc Type</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">📄 Doc Type</label>
               <select
                 value={filterDocType}
                 onChange={(e) => setFilterDocType(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
               >
                 <option value="all">All Doc Types</option>
                 <option value="employment">Employment</option>
@@ -182,11 +182,11 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
 
             {/* 4. Clause Category Filter */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 block mb-1">📍 Clause Category</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">📍 Clause Category</label>
               <select
                 value={filterClause}
                 onChange={(e) => setFilterClause(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
               >
                 <option value="all">All Clauses</option>
                 <option value="indemnification">Indemnification</option>
@@ -198,11 +198,11 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
 
             {/* 5. Department Filter */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 block mb-1">🏢 Department</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">🏢 Department</label>
               <select
                 value={filterDepartment}
                 onChange={(e) => setFilterDepartment(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
               >
                 <option value="all">All Teams</option>
                 <option value="legal">Legal Team</option>
@@ -213,11 +213,11 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
 
             {/* 6. Author Filter */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 block mb-1">👤 Author</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">👤 Author</label>
               <select
                 value={filterAuthor}
                 onChange={(e) => setFilterAuthor(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
               >
                 <option value="all">All Authors</option>
                 <option value="samarth">Samarth Mangrule</option>
@@ -227,11 +227,11 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
 
             {/* 7. Tags Filter */}
             <div>
-              <label className="text-[10px] font-bold text-slate-400 block mb-1">🏷️ Custom Tags</label>
+              <label className="text-[11px] font-medium text-slate-400 block mb-1">🏷️ Custom Tags</label>
               <select
                 value={filterTag}
                 onChange={(e) => setFilterTag(e.target.value)}
-                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+                className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
               >
                 <option value="all">All Tags</option>
                 <option value="highvalue">High-Value</option>
@@ -245,8 +245,8 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
       </div>
 
       {/* Results Section */}
-      <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
-        <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center justify-between">
+      <div className="p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm space-y-4">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-white flex items-center justify-between">
           <span>Vector Search Results ({results.length})</span>
           <span className="text-xs text-slate-400 font-mono">384-Dim Cosine Distance Match</span>
         </h2>
@@ -257,25 +257,25 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
             return (
               <div
                 key={chunk.id}
-                className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 space-y-3 hover:border-brand-500/40 transition-colors"
+                className="p-5 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/[0.06] space-y-3 hover:border-brand-500/40 transition-colors"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-brand-400">
+                  <div className="flex items-center gap-2 text-xs font-medium text-brand-600 dark:text-brand-400">
                     <FileText className="w-4 h-4" />
                     <span>{parentDoc?.filename || 'Document'}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-black border border-emerald-500/30">
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-semibold border border-emerald-500/30">
                       {Math.round((chunk.similarity_score || 0.92) * 100)}% Match
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[11px] font-mono font-bold border border-brand-500/20">
+                    <span className="px-2.5 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 text-[11px] font-mono font-medium border border-brand-500/15">
                       Page {chunk.page_number} ({chunk.clause_number})
                     </span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-800 dark:text-slate-200 font-mono leading-relaxed bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <p className="text-xs text-slate-800 dark:text-slate-200 font-mono leading-relaxed bg-white dark:bg-white/[0.03] p-4 rounded-xl border border-slate-200 dark:border-white/[0.06]">
                   "{chunk.content}"
                 </p>
 
@@ -285,7 +285,7 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
                       if (parentDoc) onSelectDoc(parentDoc);
                       setActiveTab('chat');
                     }}
-                    className="text-xs font-extrabold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+                    className="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
                   >
                     <span>Ask RAG Assistant about this clause →</span>
                   </button>
@@ -297,7 +297,7 @@ export const SemanticSearchView: React.FC<SemanticSearchViewProps> = ({
           {results.length === 0 && !isSearching && (
             <div className="p-12 text-center text-slate-400 text-xs space-y-2">
               <Zap className="w-8 h-8 text-brand-500 mx-auto opacity-80" />
-              <div className="font-bold text-slate-600 dark:text-slate-300">Execute Vector Search Above</div>
+              <div className="font-medium text-slate-600 dark:text-slate-300">Execute Vector Search Above</div>
               <div>Type a query and click 'Search Vectors' to filter across all indexed contract clauses.</div>
             </div>
           )}

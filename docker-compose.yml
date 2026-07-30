@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=lexirag
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lexirag"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: .
@@ -10,9 +27,13 @@ services:
     environment:
       - SECRET_KEY=lexirag-super-secret-key-prod
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/lexirag
     volumes:
       - ./backend/uploads:/app/uploads
       - ./backend/vector_db:/app/vector_db
+    depends_on:
+      db:
+        condition: service_healthy
 
   frontend:
     build:
@@ -22,3 +43,6 @@ services:
       - "3000:80"
     depends_on:
       - backend
+
+volumes:
+  postgres_data:

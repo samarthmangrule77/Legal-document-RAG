@@ -92,13 +92,13 @@ export const TimelineView: React.FC<TimelineViewProps> = ({ documents }) => {
     <div className="space-y-8 animate-fade-in pb-12">
       
       {/* Header */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="p-6 sm:p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-amber-500 uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-xs font-medium text-amber-500 uppercase tracking-wider">
             <Calendar className="w-4 h-4" />
             <span>Temporal Extraction & Calendar Integration</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">
             Contract Deadlines & 1-Click Calendar Sync
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -106,15 +106,15 @@ export const TimelineView: React.FC<TimelineViewProps> = ({ documents }) => {
           </p>
         </div>
 
-        <div className="px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2">
+        <div className="px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs font-medium text-amber-600 dark:text-amber-400 flex items-center gap-2">
           <Sparkles className="w-4 h-4" />
           <span>Google Calendar & Outlook Enabled ✔</span>
         </div>
       </div>
 
       {/* Timeline Roadmap */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-        <div className="relative border-l-2 border-slate-200 dark:border-slate-800 ml-4 sm:ml-8 space-y-8 py-2">
+      <div className="p-6 sm:p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06]">
+        <div className="relative border-l-2 border-slate-200 dark:border-white/[0.06] ml-4 sm:ml-8 space-y-8 py-2">
           
           {allEvents.map((event) => {
             const catInfo = getCategoryBadge(event.category);
@@ -125,24 +125,24 @@ export const TimelineView: React.FC<TimelineViewProps> = ({ documents }) => {
               <div key={event.id} className="relative pl-6 sm:pl-8 group">
                 
                 {/* Dot */}
-                <div className="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-white dark:bg-slate-900 border-2 border-brand-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                <div className="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-white dark:bg-white/[0.03] border-2 border-brand-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                   <Icon className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
                 </div>
 
                 {/* Event Card */}
-                <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 space-y-4 hover:border-brand-400 transition-colors">
+                <div className="p-6 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/[0.06] space-y-4 hover:border-brand-400 transition-colors">
                   
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-mono text-xs font-extrabold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
+                    <span className="font-mono text-xs font-semibold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
                       📅 {event.date}
                     </span>
 
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${catInfo.bg}`}>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase ${catInfo.bg}`}>
                       {event.category}
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base">
+                  <h3 className="font-medium text-slate-900 dark:text-slate-100 text-base">
                     {event.title}
                   </h3>
 
@@ -150,13 +150,13 @@ export const TimelineView: React.FC<TimelineViewProps> = ({ documents }) => {
                     {event.description}
                   </p>
 
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-200/60 dark:border-slate-800 pb-3">
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-200/60 dark:border-white/[0.06] pb-3">
                     <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
                       <FileText className="w-3.5 h-3.5 text-brand-500" />
                       {event.docName}
                     </span>
                     {event.clause_ref && (
-                      <span className="font-mono text-brand-600 dark:text-brand-400 font-bold">{event.clause_ref}</span>
+                      <span className="font-mono text-brand-600 dark:text-brand-400 font-medium">{event.clause_ref}</span>
                     )}
                   </div>
 
@@ -166,7 +166,7 @@ export const TimelineView: React.FC<TimelineViewProps> = ({ documents }) => {
                     {/* Google Calendar */}
                     <button
                       onClick={() => handleGoogleCalendarSync(event)}
-                      className="px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold transition-all border border-blue-500/20 flex items-center gap-1.5"
+                      className="px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-medium transition-all border border-blue-500/20 flex items-center gap-1.5"
                     >
                       <span>📅 Google Calendar</span>
                       <ExternalLink className="w-3 h-3 opacity-60" />
@@ -175,7 +175,7 @@ export const TimelineView: React.FC<TimelineViewProps> = ({ documents }) => {
                     {/* Outlook Calendar */}
                     <button
                       onClick={() => handleOutlookSync(event)}
-                      className="px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-bold transition-all border border-cyan-500/20 flex items-center gap-1.5"
+                      className="px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-medium transition-all border border-cyan-500/20 flex items-center gap-1.5"
                     >
                       <span>📧 Outlook</span>
                       <ExternalLink className="w-3 h-3 opacity-60" />
@@ -184,7 +184,7 @@ export const TimelineView: React.FC<TimelineViewProps> = ({ documents }) => {
                     {/* Set Automated Reminder */}
                     <button
                       onClick={() => handleSetReminder(event.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border flex items-center gap-1.5 ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border flex items-center gap-1.5 ${
                         isReminderSet
                           ? 'bg-emerald-500 text-white border-emerald-400'
                           : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/20'

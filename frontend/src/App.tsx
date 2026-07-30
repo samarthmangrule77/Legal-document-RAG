@@ -479,10 +479,10 @@ export const App: React.FC = () => {
   // Render Loading spinner while checking initial auth status
   if (!authChecked) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-xs text-slate-400 font-mono">Verifying LexiRAG Security Vault...</span>
+          <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-xs text-slate-400">Loading...</span>
         </div>
       </div>
     );
@@ -494,10 +494,7 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-enterprise-saas bg-vignette text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-200 overflow-x-hidden">
-      {/* Soft Ambient Radial Glows (5–8% opacity) */}
-      <div className="glow-accent-blue pointer-events-none"></div>
-      <div className="glow-accent-purple pointer-events-none"></div>
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-150 overflow-x-hidden">
       
       {/* Real-Time WebSocket Floating Toasts Stack */}
       <NotificationToastContainer
@@ -733,31 +730,31 @@ export const App: React.FC = () => {
 
       {/* Create Organization Modal */}
       {isCreateOrgModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md glass-card bg-white dark:bg-navy-950 rounded-3xl p-6 space-y-6 border border-slate-200 dark:border-slate-800 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-              <h3 className="font-extrabold text-base text-slate-900 dark:text-white">Create New Organization Workspace</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-xl p-6 space-y-5 border border-slate-200 dark:border-white/[0.08] shadow-lg">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/[0.06] pb-3">
+              <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Create Organization</h3>
               <button onClick={() => setIsCreateOrgModalOpen(false)} className="text-xs text-slate-400 hover:text-slate-600">Close</button>
             </div>
 
             <form onSubmit={handleCreateOrgSubmit} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Company / Organization Name</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-300">Organization Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Acme Global Logistics"
                   value={newOrgName}
                   onChange={(e) => setNewOrgName(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-100 dark:bg-navy-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs"
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] rounded-lg text-sm"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-md transition-all"
+                className="w-full py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-colors"
               >
-                Create Enterprise Tenant Workspace
+                Create Organization
               </button>
             </form>
           </div>

@@ -3,11 +3,9 @@ import {
   CheckCircle2, 
   Scan, 
   ShieldAlert, 
-  FileText, 
   UserPlus, 
   X, 
-  Sparkles,
-  Wifi
+  Bell
 } from 'lucide-react';
 
 export interface NotificationEvent {
@@ -30,88 +28,51 @@ export const NotificationToastContainer: React.FC<NotificationToastContainerProp
   onDismiss,
   isConnected
 }) => {
-  // Show only top 4 recent active toasts
-  const activeToasts = notifications.slice(0, 4);
+  const activeToasts = notifications.slice(0, 3);
 
   const getIcon = (event: string) => {
     switch (event) {
       case 'doc_indexed':
-        return <CheckCircle2 className="w-5 h-5 text-emerald-400" />;
+        return <CheckCircle2 className="w-4 h-4 text-green-500" />;
       case 'risk_analysis_completed':
-        return <ShieldAlert className="w-5 h-5 text-indigo-400" />;
+        return <ShieldAlert className="w-4 h-4 text-blue-500" />;
       case 'ocr_completed':
-        return <Scan className="w-5 h-5 text-amber-400" />;
+        return <Scan className="w-4 h-4 text-amber-500" />;
       case 'member_joined':
-        return <UserPlus className="w-5 h-5 text-cyan-400" />;
+        return <UserPlus className="w-4 h-4 text-teal-500" />;
       default:
-        return <Sparkles className="w-5 h-5 text-brand-400" />;
+        return <Bell className="w-4 h-4 text-slate-400" />;
     }
   };
 
-  const getBorderColor = (event: string) => {
-    switch (event) {
-      case 'doc_indexed':
-        return 'border-emerald-500/40 bg-slate-900/90 shadow-emerald-500/10';
-      case 'risk_analysis_completed':
-        return 'border-indigo-500/40 bg-slate-900/90 shadow-indigo-500/10';
-      case 'ocr_completed':
-        return 'border-amber-500/40 bg-slate-900/90 shadow-amber-500/10';
-      case 'member_joined':
-        return 'border-cyan-500/40 bg-slate-900/90 shadow-cyan-500/10';
-      default:
-        return 'border-brand-500/40 bg-slate-900/90 shadow-brand-500/10';
-    }
-  };
+  if (activeToasts.length === 0) return null;
 
   return (
-    <div className="fixed top-20 right-4 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
-      
-      {/* WebSocket Status Indicator Pill */}
-      <div className="self-end pointer-events-auto flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-800 text-[10px] font-bold text-slate-300 shadow-lg">
-        <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-ping' : 'bg-amber-500'}`}></span>
-        <span className="flex items-center gap-1">
-          <Wifi className="w-3 h-3 text-brand-400" />
-          {isConnected ? 'Live WebSockets Active' : 'Connecting Stream...'}
-        </span>
-      </div>
+    <div className="fixed top-16 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none">
 
-      {/* Floating Notification Toasts */}
       {activeToasts.map((item) => (
         <div
           key={item.id}
-          className={`pointer-events-auto relative overflow-hidden p-4 rounded-2xl border backdrop-blur-xl text-white shadow-2xl transition-all duration-300 animate-in slide-in-from-right-5 ${getBorderColor(
-            item.event
-          )}`}
+          className="pointer-events-auto p-3 rounded-lg bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/[0.08] shadow-md animate-fade-in"
         >
-          {/* Animated top progress bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-500 via-indigo-500 to-emerald-500 animate-pulse"></div>
-
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 flex-shrink-0 mt-0.5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-2.5">
+              <div className="mt-0.5 flex-shrink-0">
                 {getIcon(item.event)}
               </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-xs font-black tracking-tight text-white">{item.title}</h4>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    ✔ Live
-                  </span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-medium">
+              <div className="space-y-0.5 min-w-0">
+                <h4 className="text-xs font-medium text-slate-800 dark:text-white truncate">{item.title}</h4>
+                <p className="text-[11px] text-slate-500 leading-snug">
                   {item.message}
                 </p>
-                <div className="text-[10px] text-slate-400 font-mono mt-1">
-                  {item.timestamp}
-                </div>
               </div>
             </div>
 
             <button
               onClick={() => onDismiss(item.id)}
-              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-0.5 rounded transition-colors flex-shrink-0"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3 h-3" />
             </button>
           </div>
         </div>

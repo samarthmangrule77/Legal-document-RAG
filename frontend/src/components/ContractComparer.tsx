@@ -33,13 +33,13 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
     <div className="space-y-8 animate-fade-in">
       
       {/* Header */}
-      <div className="p-6 rounded-3xl glass-card border border-slate-200/80 dark:border-slate-800 space-y-4">
+      <div className="p-6 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/[0.06] space-y-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-indigo-500 uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-xs font-medium text-indigo-500 uppercase tracking-wider">
             <GitCompare className="w-4 h-4" />
             <span>AI Side-by-Side Contract Comparison Engine</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">
             Compare Two Legal Contracts
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -51,12 +51,12 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
           
           {/* Doc 1 */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-navy-900/60 border border-slate-200/60 dark:border-slate-800 space-y-2">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Base Contract (Document A)</label>
+          <div className="p-4 rounded-lg bg-slate-50 dark:bg-white/[0.04]/60 border border-slate-200/60 dark:border-white/[0.06] space-y-2">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300">Base Contract (Document A)</label>
             <select
               value={doc1Id}
               onChange={(e) => setDoc1Id(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-semibold bg-white dark:bg-navy-950 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+              className="w-full px-3 py-2 text-xs font-semibold bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
             >
               {documents.map((d) => (
                 <option key={d.id} value={d.id}>{d.filename}</option>
@@ -65,12 +65,12 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
           </div>
 
           {/* Doc 2 */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-navy-900/60 border border-slate-200/60 dark:border-slate-800 space-y-2">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Comparison Draft (Document B)</label>
+          <div className="p-4 rounded-lg bg-slate-50 dark:bg-white/[0.04]/60 border border-slate-200/60 dark:border-white/[0.06] space-y-2">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300">Comparison Draft (Document B)</label>
             <select
               value={doc2Id}
               onChange={(e) => setDoc2Id(e.target.value)}
-              className="w-full px-3 py-2 text-xs font-semibold bg-white dark:bg-navy-950 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200"
+              className="w-full px-3 py-2 text-xs font-semibold bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
             >
               {documents.map((d) => (
                 <option key={d.id} value={d.id}>{d.filename}</option>
@@ -104,9 +104,9 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Similarity Score Card */}
-            <div className="glass-card p-6 rounded-3xl space-y-3 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center text-center">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Clause Similarity Score</div>
-              <div className="text-4xl font-extrabold text-indigo-600 dark:text-indigo-400">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl space-y-3 border border-slate-200 dark:border-white/[0.06] flex flex-col items-center justify-center text-center">
+              <div className="text-xs font-medium uppercase tracking-wider text-slate-400">Clause Similarity Score</div>
+              <div className="text-4xl font-semibold text-indigo-600 dark:text-indigo-400">
                 {comparison.similarity_percentage}%
               </div>
               <p className="text-xs text-slate-500">
@@ -115,8 +115,8 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
             </div>
 
             {/* Key Differences */}
-            <div className="glass-card p-6 rounded-3xl space-y-3 border border-slate-200/80 dark:border-slate-800">
-              <h3 className="text-xs font-bold text-rose-500 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl space-y-3 border border-slate-200 dark:border-white/[0.06]">
+              <h3 className="text-xs font-medium text-rose-500 uppercase tracking-wider flex items-center gap-1.5">
                 <MinusCircle className="w-4 h-4" />
                 Key Differences Detected
               </h3>
@@ -131,8 +131,8 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
             </div>
 
             {/* Key Similarities */}
-            <div className="glass-card p-6 rounded-3xl space-y-3 border border-slate-200/80 dark:border-slate-800">
-              <h3 className="text-xs font-bold text-emerald-500 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl space-y-3 border border-slate-200 dark:border-white/[0.06]">
+              <h3 className="text-xs font-medium text-emerald-500 uppercase tracking-wider flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4" />
                 Key Similarities Retained
               </h3>
@@ -149,8 +149,8 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
           </div>
 
           {/* Side-by-Side Clause Matrix */}
-          <div className="glass-card p-6 rounded-3xl space-y-6 border border-slate-200/80 dark:border-slate-800">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-xl space-y-6 border border-slate-200 dark:border-white/[0.06]">
+            <h2 className="text-lg font-medium text-slate-900 dark:text-white">
               Side-by-Side Clause Breakdown Matrix
             </h2>
 
@@ -158,11 +158,11 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
               {comparison.clauses.map((clause, idx) => (
                 <div
                   key={idx}
-                  className="p-5 rounded-2xl bg-slate-50 dark:bg-navy-900/50 border border-slate-200/60 dark:border-slate-800 space-y-3"
+                  className="p-5 rounded-lg bg-slate-50 dark:bg-white/[0.04]/50 border border-slate-200/60 dark:border-white/[0.06] space-y-3"
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">{clause.title}</h3>
-                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold capitalize ${
+                    <h3 className="font-medium text-slate-900 dark:text-slate-100 text-sm">{clause.title}</h3>
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${
                       clause.status === 'added' ? 'bg-emerald-500/15 text-emerald-600' :
                       clause.status === 'removed' ? 'bg-rose-500/15 text-rose-600' :
                       clause.status === 'modified' ? 'bg-amber-500/15 text-amber-600' : 'bg-brand-500/15 text-brand-600'
@@ -173,15 +173,15 @@ export const ContractComparer: React.FC<ContractComparerProps> = ({ documents })
 
                   {/* Side by side text */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                    <div className="p-3.5 rounded-xl bg-white dark:bg-navy-950 border border-slate-200 dark:border-slate-800 space-y-1">
-                      <div className="text-[10px] font-bold text-slate-400">DOCUMENT A (Base)</div>
+                    <div className="p-3.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/[0.06] space-y-1">
+                      <div className="text-[11px] font-medium text-slate-400">DOCUMENT A (Base)</div>
                       <p className="text-slate-700 dark:text-slate-300 font-mono text-[11px] leading-relaxed">
                         {clause.doc1_text || 'N/A'}
                       </p>
                     </div>
 
-                    <div className="p-3.5 rounded-xl bg-white dark:bg-navy-950 border border-slate-200 dark:border-slate-800 space-y-1">
-                      <div className="text-[10px] font-bold text-slate-400">DOCUMENT B (Comparison)</div>
+                    <div className="p-3.5 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/[0.06] space-y-1">
+                      <div className="text-[11px] font-medium text-slate-400">DOCUMENT B (Comparison)</div>
                       <p className="text-slate-700 dark:text-slate-300 font-mono text-[11px] leading-relaxed">
                         {clause.doc2_text || 'N/A'}
                       </p>

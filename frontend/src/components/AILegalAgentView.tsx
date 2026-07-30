@@ -104,22 +104,22 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
     <div className="max-w-6xl mx-auto space-y-8 pb-12 animate-fade-in">
       
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-navy-950 p-8 border border-slate-800 text-white shadow-2xl">
+      <div className="relative overflow-hidden rounded-xl bg-slate-900 dark:bg-white/[0.03] p-8 border border-white/[0.06] text-white shadow-lg">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 mb-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-medium border border-emerald-500/30 mb-3">
               <Bot className="w-3.5 h-3.5" />
               Autonomous Agent Mode • Active Continuous Monitoring
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Autonomous AI Legal Agent</h1>
+            <h1 className="text-3xl font-semibold tracking-tight">Autonomous AI Legal Agent</h1>
             <p className="text-slate-400 mt-1 max-w-xl text-sm leading-relaxed">
               Instead of passive chat, your AI Agent continuously analyzes every uploaded contract, suggests proactive actions, dispatches reminders, and generates audit reports.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="px-4 py-2 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="px-4 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-medium flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
               Agent Listening & Operational
             </span>
           </div>
@@ -127,9 +127,9 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
       </div>
 
       {/* Goal Prompt & Execution Control Box */}
-      <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+      <div className="p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-extrabold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wider">
             <Sparkles className="w-4 h-4" />
             <span>Set High-Level Agent Goal</span>
           </div>
@@ -142,13 +142,13 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             placeholder="Instruct your AI Agent (e.g. 'Audit all contracts for uncapped liability and schedule renewal reminders')..."
-            className="w-full pl-4 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-slate-100 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+            className="w-full pl-4 pr-4 py-3.5 bg-slate-50 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.08] rounded-lg text-slate-900 dark:text-slate-100 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/40"
           />
 
           <button
             onClick={handleRunAgent}
             disabled={isRunning}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-brand-500/25 transition-all whitespace-nowrap flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-semibold text-xs shadow-md transition-all whitespace-nowrap flex items-center justify-center gap-2"
           >
             {isRunning ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
             <span>{isRunning ? 'Agent Executing...' : 'Execute Agent Goal ▶'}</span>
@@ -156,46 +156,46 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
         </div>
 
         {/* Visual 4-Step Autonomous Execution Stepper */}
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+        <div className="pt-4 border-t border-slate-100 dark:border-white/[0.06] grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
           
-          <div className={`p-3.5 rounded-2xl border transition-all ${
-            activeStep >= 1 ? 'bg-brand-500/10 border-brand-500/30 text-brand-600 dark:text-brand-400 font-bold' : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400'
+          <div className={`p-3.5 rounded-lg border transition-all ${
+            activeStep >= 1 ? 'bg-brand-500/10 border-brand-500/30 text-brand-600 dark:text-brand-400 font-medium' : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/[0.06] text-slate-400'
           }`}>
-            <div className="text-[10px] font-mono uppercase">Step 1</div>
-            <div className="font-black mt-0.5">Auto Analysis</div>
-            <div className="text-[10px] opacity-80 mt-0.5">Scans all contracts</div>
+            <div className="text-[11px] font-mono uppercase">Step 1</div>
+            <div className="font-semibold mt-0.5">Auto Analysis</div>
+            <div className="text-[11px] opacity-80 mt-0.5">Scans all contracts</div>
           </div>
 
-          <div className={`p-3.5 rounded-2xl border transition-all ${
-            activeStep >= 2 ? 'bg-brand-500/10 border-brand-500/30 text-brand-600 dark:text-brand-400 font-bold' : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400'
+          <div className={`p-3.5 rounded-lg border transition-all ${
+            activeStep >= 2 ? 'bg-brand-500/10 border-brand-500/30 text-brand-600 dark:text-brand-400 font-medium' : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/[0.06] text-slate-400'
           }`}>
-            <div className="text-[10px] font-mono uppercase">Step 2</div>
-            <div className="font-black mt-0.5">Action Suggestions</div>
-            <div className="text-[10px] opacity-80 mt-0.5">Synthesizes remedies</div>
+            <div className="text-[11px] font-mono uppercase">Step 2</div>
+            <div className="font-semibold mt-0.5">Action Suggestions</div>
+            <div className="text-[11px] opacity-80 mt-0.5">Synthesizes remedies</div>
           </div>
 
-          <div className={`p-3.5 rounded-2xl border transition-all ${
-            activeStep >= 3 ? 'bg-brand-500/10 border-brand-500/30 text-brand-600 dark:text-brand-400 font-bold' : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400'
+          <div className={`p-3.5 rounded-lg border transition-all ${
+            activeStep >= 3 ? 'bg-brand-500/10 border-brand-500/30 text-brand-600 dark:text-brand-400 font-medium' : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/[0.06] text-slate-400'
           }`}>
-            <div className="text-[10px] font-mono uppercase">Step 3</div>
-            <div className="font-black mt-0.5">Send Reminders</div>
-            <div className="text-[10px] opacity-80 mt-0.5">Google/Outlook sync</div>
+            <div className="text-[11px] font-mono uppercase">Step 3</div>
+            <div className="font-semibold mt-0.5">Send Reminders</div>
+            <div className="text-[11px] opacity-80 mt-0.5">Google/Outlook sync</div>
           </div>
 
-          <div className={`p-3.5 rounded-2xl border transition-all ${
-            activeStep >= 4 ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-bold' : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400'
+          <div className={`p-3.5 rounded-lg border transition-all ${
+            activeStep >= 4 ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-medium' : 'bg-slate-50 dark:bg-white/[0.03] border-slate-200 dark:border-white/[0.06] text-slate-400'
           }`}>
-            <div className="text-[10px] font-mono uppercase">Step 4</div>
-            <div className="font-black mt-0.5">Generate Reports</div>
-            <div className="text-[10px] opacity-80 mt-0.5">PDF audit summary</div>
+            <div className="text-[11px] font-mono uppercase">Step 4</div>
+            <div className="font-semibold mt-0.5">Generate Reports</div>
+            <div className="text-[11px] opacity-80 mt-0.5">PDF audit summary</div>
           </div>
 
         </div>
 
         {/* Live Execution Logs Stream */}
         {executionLogs.length > 0 && (
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-emerald-400 font-mono text-xs space-y-1.5 leading-relaxed">
-            <div className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Agent Action Telemetry Log:</div>
+          <div className="p-4 rounded-lg bg-gray-950 border border-white/[0.06] text-emerald-400 font-mono text-xs space-y-1.5 leading-relaxed">
+            <div className="text-[11px] text-slate-500 uppercase tracking-wider font-medium">Agent Action Telemetry Log:</div>
             {executionLogs.map((log, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <span className="text-slate-600">[{new Date().toLocaleTimeString()}]</span>
@@ -210,24 +210,24 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Column 1: Proactive Action Suggestions Cards */}
-        <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
               <Zap className="w-5 h-5 text-amber-500" />
               <span>Proactive Action Recommendations (3)</span>
             </h2>
-            <span className="text-xs text-amber-500 font-bold">Agent Auto-Generated</span>
+            <span className="text-xs text-amber-500 font-medium">Agent Auto-Generated</span>
           </div>
 
           <div className="space-y-3">
             
             {/* Action Card 1 */}
-            <div className="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/20 space-y-2">
+            <div className="p-5 rounded-lg bg-rose-500/5 border border-rose-500/20 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span className="text-xs font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span>🔴 Renegotiate Uncapped Indemnification</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black">
+                <span className="px-2.5 py-0.5 rounded-full bg-rose-500 text-white text-[11px] font-semibold">
                   HIGH URGENCY
                 </span>
               </div>
@@ -235,19 +235,19 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
                 Clause 12.1 in Senior_Software_Engineer_Agreement.pdf contains unlimited monetary liability. Recommend drafting a 12-month salary ceiling cap.
               </p>
               <div className="pt-2 flex justify-end">
-                <button className="px-3.5 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1">
+                <button className="px-3.5 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-medium shadow-sm transition-all flex items-center gap-1">
                   <span>1-Click Apply Draft Cap →</span>
                 </button>
               </div>
             </div>
 
             {/* Action Card 2 */}
-            <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-2">
+            <div className="p-5 rounded-lg bg-amber-500/5 border border-amber-500/20 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span className="text-xs font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span>📅 Schedule Non-Renewal Notice Review</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-black border border-amber-500/30">
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[11px] font-semibold border border-amber-500/30">
                   MEDIUM URGENCY
                 </span>
               </div>
@@ -255,19 +255,19 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
                 Commercial Lease cancellation window opens April 1, 2027. Landlord requires 60 days advance written notice.
               </p>
               <div className="pt-2 flex justify-end">
-                <button className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1">
+                <button className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-medium shadow-sm transition-all flex items-center gap-1">
                   <span>1-Click Draft Non-Renewal Letter →</span>
                 </button>
               </div>
             </div>
 
             {/* Action Card 3 */}
-            <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 space-y-2">
+            <div className="p-5 rounded-lg bg-emerald-500/5 border border-emerald-500/20 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span className="text-xs font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span>🟢 Verify SOC2 Security Compliance</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black border border-emerald-500/30">
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold border border-emerald-500/30">
                   LOW URGENCY
                 </span>
               </div>
@@ -283,9 +283,9 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
         <div className="space-y-8">
           
           {/* Box 1: Scheduled Reminders */}
-          <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+          <div className="p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <h2 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-brand-500" />
                 <span>Automated Reminders Dispatched</span>
               </h2>
@@ -293,17 +293,17 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
             </div>
 
             <div className="space-y-3">
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
+              <div className="p-4 rounded-lg bg-slate-50 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/[0.06] flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">Commercial Lease Notice Deadline</div>
-                  <div className="text-[10px] text-slate-400 font-mono">Cutoff Date: April 1, 2027</div>
+                  <div className="text-xs font-medium text-slate-900 dark:text-white">Commercial Lease Notice Deadline</div>
+                  <div className="text-[11px] text-slate-400 font-mono">Cutoff Date: April 1, 2027</div>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <a
                     href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Commercial+Lease+Notice+Deadline"
                     target="_blank"
                     rel="noreferrer"
-                    className="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 text-[10px] font-bold border border-blue-500/20"
+                    className="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 text-[11px] font-medium border border-blue-500/20"
                   >
                     Google
                   </a>
@@ -311,7 +311,7 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
                     href="https://outlook.live.com/calendar/0/deeplink/compose?subject=Commercial+Lease+Notice+Deadline"
                     target="_blank"
                     rel="noreferrer"
-                    className="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 text-[10px] font-bold border border-indigo-500/20"
+                    className="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 text-[11px] font-medium border border-indigo-500/20"
                   >
                     Outlook
                   </a>
@@ -321,27 +321,27 @@ Status: Certified SOC2 & HIPAA Compliant Audit Stream
           </div>
 
           {/* Box 2: Generated Audit Reports Vault */}
-          <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+          <div className="p-8 rounded-xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] shadow-sm space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <h2 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                 <FileText className="w-5 h-5 text-indigo-500" />
                 <span>Generated Audit Reports</span>
               </h2>
               <span className="text-xs text-slate-400 font-mono">PDF Vault</span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-brand-500/10 to-indigo-500/10 border border-brand-500/20 flex items-center justify-between">
+            <div className="p-4 rounded-lg bg-gradient-to-r from-brand-500/10 to-indigo-500/10 border border-brand-500/15 flex items-center justify-between">
               <div>
-                <div className="text-xs font-black text-slate-900 dark:text-white">Executive Risk Audit Report (Q3 2026)</div>
-                <div className="text-[10px] text-slate-400 font-mono">Generated Today • 8 Contracts Audited</div>
+                <div className="text-xs font-semibold text-slate-900 dark:text-white">Executive Risk Audit Report (Q3 2026)</div>
+                <div className="text-[11px] text-slate-400 font-mono">Generated Today • 8 Contracts Audited</div>
               </div>
 
               <button
                 onClick={handleDownloadReport}
-                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-md transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-1.5 ${
                   downloadSuccess
                     ? 'bg-emerald-500 text-white shadow-emerald-500/20'
-                    : 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-brand-500/20'
+                    : 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-500/20'
                 }`}
               >
                 {downloadSuccess ? (
