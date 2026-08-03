@@ -1,11 +1,15 @@
 import os
 import time
+import uuid
 import asyncio
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Depends
 from pydantic import BaseModel
 from typing import Optional, Dict, Any
+from sqlalchemy.orm import Session
 
 from app.config import settings
+from app.db.database import get_db
+from app.db.models import Document, ContractSummary, RiskReport, Workspace, User, AuditLog
 from app.rag.extractor import DocumentExtractor
 from app.rag.vector_store import vector_store_instance
 from app.rag.analyzer import ContractAnalyzer
@@ -13,7 +17,7 @@ from app.rag.analyzer import ContractAnalyzer
 router = APIRouter(prefix="/generator", tags=["AI Contract Generator"])
 
 class GenerateContractRequest(BaseModel):
-    template_id: str  # 'employment' | 'nda' | 'saas_msa' | 'lease'
+    template_id: str
     parameters: Dict[str, Any]
 
 @router.get("/templates")
@@ -196,7 +200,7 @@ Lessee ({tenant}): _______________________
 """
 
 @router.post("/generate")
-async def generate_contract(req: GenerateContractRequest):
+async def generate_contract(req: GenerateContractRequest, db: Session = Depends(get_db)):
     p = req.parameters
     if req.template_id == "employment":
         filename = f"Employment_Agreement_{p.get('employee_name', 'Draft').replace(' ', '_')}.pdf"
@@ -213,29 +217,86 @@ async def generate_contract(req: GenerateContractRequest):
     else:
         raise HTTPException(status_code=400, detail="Unsupported contract template.")
 
-    doc_id = f"doc-gen-{int(time.time())}"
+    doc_id = str(uuid.uuid4())
     file_path = os.path.join(settings.UPLOAD_DIR, filename)
 
-    # Write generated text file
     with open(file_path, "w", encoding="utf-8", errors="ignore") as f:
         f.write(contract_text)
 
-    # Chunk and index into FAISS Vector Store
     extracted = {"file_type": "pdf", "page_count": 1, "pages": [{"page_number": 1, "text": contract_text}], "is_scanned_ocr": False}
     chunks = DocumentExtractor.chunk_document(extracted, doc_id)
     vector_store_instance.add_chunks(chunks)
 
-    # Run Automated Legal Analysis
     risk_analysis = ContractAnalyzer.analyze_risks(chunks)
     summary = ContractAnalyzer.generate_summary(chunks)
     timeline = ContractAnalyzer.extract_timeline(chunks)
+
+    ws = db.query(Workspace).first()
+    ws_id = ws.id if ws else str(uuid.uuid4())
+
+    new_doc = Document(
+        id=doc_id,
+        workspace_id=ws_id,
+        filename=filename,
+        file_type="pdf",
+        file_size_bytes=len(contract_text.encode("utf-8")),
+        file_path=file_path,
+        chunk_count=len(chunks),
+        status="indexed",
+        risk_score=risk_analysis.get("risk_score", 0),
+        is_scanned_ocr=False,
+        content=contract_text,
+        upload_date_str=time.strftime("%Y-%m-%d %H:%M")
+    )
+    db.add(new_doc)
+
+    summary_rec = ContractSummary(
+        id=str(uuid.uuid4()),
+        document_id=doc_id,
+        executive_summary=summary.get("executive_summary", "Contract summary generated."),
+        parties=summary.get("parties", []),
+        effective_date=summary.get("effective_date", "TBD"),
+        expiry_date=summary.get("expiry_date", "TBD"),
+        financial_terms=summary.get("financial_terms", "Standard terms"),
+        key_obligations=summary.get("key_obligations", []),
+        governing_law=summary.get("governing_law", "Standard jurisdiction")
+    )
+    db.add(summary_rec)
+
+    risk_rec = RiskReport(
+        id=str(uuid.uuid4()),
+        document_id=doc_id,
+        overall_risk_score=risk_analysis.get("risk_score", 0),
+        risk_level="High" if risk_analysis.get("risk_score", 0) > 60 else ("Medium" if risk_analysis.get("risk_score", 0) > 30 else "Low"),
+        flagged_clauses=risk_analysis.get("risks", [])
+    )
+    db.add(risk_rec)
+
+    audit_log = AuditLog(
+        id=str(uuid.uuid4()),
+        workspace_id=ws_id,
+        user_name="AI Contract Generator",
+        user_email="ai.generator@nexuscorp.com",
+        role="system",
+        action_type="GENERATE",
+        target_resource=filename,
+        details=f"Synthesized and indexed {filename} via AI Contract Generator.",
+        ip_address="127.0.0.1"
+    )
+    db.add(audit_log)
+
+    db.commit()
+    db.refresh(new_doc)
+
+    size_mb = new_doc.file_size_bytes / (1024 * 1024) if new_doc.file_size_bytes else 0.1
+    file_size_str = f"{size_mb:.1f} MB" if size_mb >= 1.0 else f"{max(0.1, round(new_doc.file_size_bytes / 1024, 1))} KB"
 
     doc_meta = {
         "id": doc_id,
         "filename": filename,
         "file_type": "pdf",
         "upload_date": time.strftime("%Y-%m-%d %H:%M"),
-        "file_size": f"{max(0.2, round(len(contract_text)/1024, 1))} KB",
+        "file_size": file_size_str,
         "chunk_count": len(chunks),
         "status": "indexed",
         "risk_score": risk_analysis["risk_score"],
@@ -246,11 +307,6 @@ async def generate_contract(req: GenerateContractRequest):
         "generated_text": contract_text
     }
 
-    # Add to global in-memory document store
-    from app.routes.doc_routes import DB_DOCS
-    DB_DOCS.insert(0, doc_meta)
-
-    # Trigger Real-Time WebSocket Notifications
     try:
         from app.routes.ws_routes import ws_manager
         asyncio.create_task(ws_manager.broadcast({
@@ -266,7 +322,7 @@ async def generate_contract(req: GenerateContractRequest):
 
     return {
         "status": "success",
-        "message": f"Contract successfully generated and indexed into RAG database!",
+        "message": "Contract successfully generated and indexed into RAG database!",
         "document": doc_meta,
         "contract_text": contract_text
     }

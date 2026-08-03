@@ -1,34 +1,14 @@
 import time
-from fastapi import APIRouter, HTTPException, Request
+import uuid
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from typing import Optional, List
+from sqlalchemy.orm import Session
+
+from app.db.database import get_db
+from app.db.models import Subscription, Invoice, Workspace, Document
 
 router = APIRouter(prefix="/billing", tags=["Billing & SaaS Subscriptions"])
-
-# In-memory subscription store for demonstration & SaaS persistence
-CURRENT_SUBSCRIPTION = {
-    "plan_id": "free",  # 'free' | 'pro' | 'enterprise'
-    "plan_name": "Free Plan",
-    "pdf_limit": 5,     # 5 PDFs for free tier, -1 for unlimited
-    "current_pdf_count": 3,
-    "status": "active",
-    "billing_cycle": "monthly",
-    "price_per_month": 0,
-    "renews_at": "2026-08-27",
-    "stripe_customer_id": "cus_lexi99201",
-    "stripe_subscription_id": None
-}
-
-INVOICE_HISTORY = [
-    {
-        "id": "inv_1092",
-        "date": "2026-07-01",
-        "amount": "$0.00",
-        "status": "Paid",
-        "plan": "Free Plan",
-        "pdf_url": "#"
-    }
-]
 
 class CheckoutSessionRequest(BaseModel):
     target_plan: str  # 'pro' | 'enterprise'
@@ -37,14 +17,65 @@ class CheckoutSessionRequest(BaseModel):
 class CancelSubscriptionRequest(BaseModel):
     reason: Optional[str] = "No longer needed"
 
+def _get_or_create_sub(db: Session) -> Subscription:
+    sub = db.query(Subscription).filter(Subscription.is_deleted == False).first()
+    if not sub:
+        ws = db.query(Workspace).first()
+        ws_id = ws.id if ws else str(uuid.uuid4())
+        sub = Subscription(
+            id=str(uuid.uuid4()),
+            workspace_id=ws_id,
+            plan_id="free",
+            plan_name="Free Plan",
+            pdf_limit=5,
+            current_pdf_count=0,
+            status="active",
+            billing_cycle="monthly",
+            price_per_month=0.0,
+            renews_at="2026-08-27",
+            stripe_customer_id="cus_lexi99201"
+        )
+        db.add(sub)
+        db.commit()
+        db.refresh(sub)
+    return sub
+
 @router.get("/subscription")
-def get_subscription_details():
-    from app.routes.doc_routes import DB_DOCS
-    CURRENT_SUBSCRIPTION["current_pdf_count"] = len(DB_DOCS)
-    
+def get_subscription_details(db: Session = Depends(get_db)):
+    sub = _get_or_create_sub(db)
+    doc_count = db.query(Document).filter(Document.is_deleted == False).count()
+    sub.current_pdf_count = doc_count
+    db.commit()
+
+    invoices = db.query(Invoice).filter(Invoice.subscription_id == sub.id, Invoice.is_deleted == False).order_by(Invoice.created_at.desc()).all()
+
+    inv_list = []
+    for inv in invoices:
+        inv_list.append({
+            "id": inv.invoice_number,
+            "date": inv.date_str,
+            "amount": inv.amount_str,
+            "status": inv.status,
+            "plan": inv.plan_name,
+            "pdf_url": inv.pdf_url
+        })
+
+    sub_dict = {
+        "plan_id": sub.plan_id,
+        "plan_name": sub.plan_name,
+        "pdf_limit": sub.pdf_limit,
+        "current_pdf_count": sub.current_pdf_count,
+        "status": sub.status,
+        "billing_cycle": sub.billing_cycle,
+        "price_per_month": sub.price_per_month,
+        "renews_at": sub.renews_at,
+        "stripe_customer_id": sub.stripe_customer_id,
+        "stripe_subscription_id": getattr(sub, "stripe_subscription_id", None)
+    }
+
     return {
-        "subscription": CURRENT_SUBSCRIPTION,
-        "invoices": INVOICE_HISTORY,
+        "subscription": sub_dict,
+        "invoices": inv_list,
         "plans": [
             {
                 "id": "free",
@@ -65,7 +96,7 @@ def get_subscription_details():
                 "name": "Pro Plan",
                 "price_monthly": 29,
                 "price_annual": 290,
-                "pdf_limit": -1,  # Unlimited
+                "pdf_limit": -1,
                 "features": [
                     "Unlimited PDF & DOCX uploads",
                     "Priority OCR for scanned contracts",
@@ -81,7 +112,7 @@ def get_subscription_details():
                 "name": "Enterprise Plan",
                 "price_monthly": 199,
                 "price_annual": 1990,
-                "pdf_limit": -1,  # Unlimited
+                "pdf_limit": -1,
                 "features": [
                     "Everything in Pro Plan",
                     "Dedicated vector database instance",
@@ -95,71 +126,107 @@ def get_subscription_details():
     }
 
 @router.post("/create-checkout-session")
-def create_checkout_session(req: CheckoutSessionRequest):
+def create_checkout_session(req: CheckoutSessionRequest, db: Session = Depends(get_db)):
     if req.target_plan not in ["pro", "enterprise"]:
         raise HTTPException(status_code=400, detail="Invalid subscription plan selected.")
 
-    # Simulated Stripe Checkout Session URL & payload
+    sub = _get_or_create_sub(db)
+
     session_id = f"cs_test_{int(time.time())}"
     mock_stripe_checkout_url = f"https://checkout.stripe.com/pay/{session_id}"
 
-    # Auto-upgrade in demo mode so user sees instant plan upgrade
     if req.target_plan == "pro":
-        CURRENT_SUBSCRIPTION["plan_id"] = "pro"
-        CURRENT_SUBSCRIPTION["plan_name"] = "Pro Plan"
-        CURRENT_SUBSCRIPTION["pdf_limit"] = -1
-        CURRENT_SUBSCRIPTION["price_per_month"] = 29 if req.billing_cycle == "monthly" else 24
-        CURRENT_SUBSCRIPTION["stripe_subscription_id"] = f"sub_pro_{int(time.time())}"
+        sub.plan_id = "pro"
+        sub.plan_name = "Pro Plan"
+        sub.pdf_limit = -1
+        sub.price_per_month = 29.0 if req.billing_cycle == "monthly" else 24.0
+        sub.stripe_subscription_id = f"sub_pro_{int(time.time())}"
         
-        INVOICE_HISTORY.insert(0, {
-            "id": f"inv_{int(time.time()) % 10000}",
-            "date": time.strftime("%Y-%m-%d"),
-            "amount": "$29.00" if req.billing_cycle == "monthly" else "$290.00",
-            "status": "Paid",
-            "plan": "Pro Plan",
-            "pdf_url": "#"
-        })
+        inv = Invoice(
+            id=str(uuid.uuid4()),
+            subscription_id=sub.id,
+            invoice_number=f"inv_{int(time.time()) % 10000}",
+            date_str=time.strftime("%Y-%m-%d"),
+            amount_str="$29.00" if req.billing_cycle == "monthly" else "$290.00",
+            status="Paid",
+            plan_name="Pro Plan",
+            pdf_url="#"
+        )
+        db.add(inv)
     elif req.target_plan == "enterprise":
-        CURRENT_SUBSCRIPTION["plan_id"] = "enterprise"
-        CURRENT_SUBSCRIPTION["plan_name"] = "Enterprise Plan"
-        CURRENT_SUBSCRIPTION["pdf_limit"] = -1
-        CURRENT_SUBSCRIPTION["price_per_month"] = 199 if req.billing_cycle == "monthly" else 165
-        CURRENT_SUBSCRIPTION["stripe_subscription_id"] = f"sub_ent_{int(time.time())}"
+        sub.plan_id = "enterprise"
+        sub.plan_name = "Enterprise Plan"
+        sub.pdf_limit = -1
+        sub.price_per_month = 199.0 if req.billing_cycle == "monthly" else 165.0
+        sub.stripe_subscription_id = f"sub_ent_{int(time.time())}"
 
-        INVOICE_HISTORY.insert(0, {
-            "id": f"inv_{int(time.time()) % 10000}",
-            "date": time.strftime("%Y-%m-%d"),
-            "amount": "$199.00" if req.billing_cycle == "monthly" else "$1,990.00",
-            "status": "Paid",
-            "plan": "Enterprise Plan",
-            "pdf_url": "#"
-        })
+        inv = Invoice(
+            id=str(uuid.uuid4()),
+            subscription_id=sub.id,
+            invoice_number=f"inv_{int(time.time()) % 10000}",
+            date_str=time.strftime("%Y-%m-%d"),
+            amount_str="$199.00" if req.billing_cycle == "monthly" else "$1,990.00",
+            status="Paid",
+            plan_name="Enterprise Plan",
+            pdf_url="#"
+        )
+        db.add(inv)
+
+    db.commit()
+    db.refresh(sub)
+
+    sub_dict = {
+        "plan_id": sub.plan_id,
+        "plan_name": sub.plan_name,
+        "pdf_limit": sub.pdf_limit,
+        "current_pdf_count": sub.current_pdf_count,
+        "status": sub.status,
+        "billing_cycle": sub.billing_cycle,
+        "price_per_month": sub.price_per_month,
+        "renews_at": sub.renews_at,
+        "stripe_customer_id": sub.stripe_customer_id,
+        "stripe_subscription_id": sub.stripe_subscription_id
+    }
 
     return {
         "status": "success",
         "checkout_url": mock_stripe_checkout_url,
         "session_id": session_id,
-        "message": f"Successfully upgraded to {CURRENT_SUBSCRIPTION['plan_name']}!",
-        "updated_subscription": CURRENT_SUBSCRIPTION
+        "message": f"Successfully upgraded to {sub.plan_name}!",
+        "updated_subscription": sub_dict
     }
 
 @router.post("/cancel-subscription")
-def cancel_subscription(req: CancelSubscriptionRequest):
-    CURRENT_SUBSCRIPTION["plan_id"] = "free"
-    CURRENT_SUBSCRIPTION["plan_name"] = "Free Plan"
-    CURRENT_SUBSCRIPTION["pdf_limit"] = 5
-    CURRENT_SUBSCRIPTION["price_per_month"] = 0
-    CURRENT_SUBSCRIPTION["stripe_subscription_id"] = None
+def cancel_subscription(req: CancelSubscriptionRequest, db: Session = Depends(get_db)):
+    sub = _get_or_create_sub(db)
+    sub.plan_id = "free"
+    sub.plan_name = "Free Plan"
+    sub.pdf_limit = 5
+    sub.price_per_month = 0.0
+    sub.stripe_subscription_id = None
+    db.commit()
+
+    sub_dict = {
+        "plan_id": sub.plan_id,
+        "plan_name": sub.plan_name,
+        "pdf_limit": sub.pdf_limit,
+        "current_pdf_count": sub.current_pdf_count,
+        "status": sub.status,
+        "billing_cycle": sub.billing_cycle,
+        "price_per_month": sub.price_per_month,
+        "renews_at": sub.renews_at,
+        "stripe_customer_id": sub.stripe_customer_id,
+        "stripe_subscription_id": sub.stripe_subscription_id
+    }
 
     return {
         "status": "success",
         "message": "Subscription cancelled. Downgraded to Free Plan.",
-        "subscription": CURRENT_SUBSCRIPTION
+        "subscription": sub_dict
     }
 
 @router.post("/webhook")
 async def stripe_webhook(request: Request):
-    # Endpoint for listening to real Stripe events (e.g. customer.subscription.updated)
     try:
         body = await request.body()
         return {"status": "received", "event_type": "stripe_webhook_received"}

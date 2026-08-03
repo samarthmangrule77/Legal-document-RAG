@@ -7,22 +7,25 @@ import {
   AlertTriangle, 
   ShieldCheck, 
   CheckSquare, 
-  Clock, 
   Sparkles,
-  FileText
+  FileText,
+  Eye,
+  ExternalLink
 } from 'lucide-react';
-import { LegalDocument } from '../types';
+import { LegalDocument, Citation } from '../types';
 
 interface ContractSummaryViewProps {
   selectedDoc: LegalDocument | null;
   documents: LegalDocument[];
   onSelectDoc: (doc: LegalDocument) => void;
+  onOpenPDFViewer?: (citation: Citation, doc: LegalDocument) => void;
 }
 
 export const ContractSummaryView: React.FC<ContractSummaryViewProps> = ({
   selectedDoc,
   documents,
-  onSelectDoc
+  onSelectDoc,
+  onOpenPDFViewer
 }) => {
   const doc = selectedDoc || documents[0];
   const summary = doc?.summary;
@@ -37,10 +40,23 @@ export const ContractSummaryView: React.FC<ContractSummaryViewProps> = ({
     );
   }
 
+  const handleOpenSourcePDF = (clauseTitle: string, snippetText: string, pageNum: number = 1) => {
+    if (onOpenPDFViewer && doc) {
+      onOpenPDFViewer({
+        doc_id: doc.id,
+        doc_name: doc.filename,
+        page_number: pageNum,
+        clause_number: clauseTitle,
+        snippet: snippetText,
+        confidence: 0.96
+      }, doc);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       
-      {/* Header Selector */}
+      {/* Header Selector & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/[0.06]">
         <div>
           <div className="flex items-center gap-2 text-xs font-medium text-brand-600 dark:text-brand-400 uppercase tracking-wider">
@@ -52,29 +68,55 @@ export const ContractSummaryView: React.FC<ContractSummaryViewProps> = ({
           </h1>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400 font-semibold">Switch Contract:</span>
-          <select
-            value={doc.id}
-            onChange={(e) => {
-              const found = documents.find(d => d.id === e.target.value);
-              if (found) onSelectDoc(found);
-            }}
-            className="px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
-          >
-            {documents.map((d) => (
-              <option key={d.id} value={d.id}>{d.filename}</option>
-            ))}
-          </select>
+        <div className="flex items-center gap-3">
+          {onOpenPDFViewer && (
+            <button
+              onClick={() => handleOpenSourcePDF("Executive Summary Provision", summary.executive_summary, 1)}
+              className="px-4 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-semibold transition-all flex items-center gap-2"
+            >
+              <Eye className="w-4 h-4 text-amber-500" />
+              <span>Inspect Source PDF</span>
+              <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+            </button>
+          )}
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400 font-semibold">Switch Contract:</span>
+            <select
+              value={doc.id}
+              onChange={(e) => {
+                const found = documents.find(d => d.id === e.target.value);
+                if (found) onSelectDoc(found);
+              }}
+              className="px-3 py-2 text-xs font-semibold bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] rounded-xl text-slate-800 dark:text-slate-200"
+            >
+              {documents.map((d) => (
+                <option key={d.id} value={d.id}>{d.filename}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Executive Summary Card */}
       <div className="p-6 rounded-xl bg-gradient-to-r from-brand-900 via-indigo-950 to-navy-950 text-white shadow-md space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-brand-300 text-xs font-medium">
-          <FileCheck2 className="w-3.5 h-3.5" />
-          <span>Executive Summary</span>
+        <div className="flex items-center justify-between">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-brand-300 text-xs font-medium">
+            <FileCheck2 className="w-3.5 h-3.5" />
+            <span>Executive Summary</span>
+          </div>
+
+          {onOpenPDFViewer && (
+            <button
+              onClick={() => handleOpenSourcePDF("Executive Summary Clause", summary.executive_summary, 1)}
+              className="text-xs text-amber-300 hover:text-amber-200 font-medium underline flex items-center gap-1"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>View Highlighted Source</span>
+            </button>
+          )}
         </div>
+
         <p className="text-base text-slate-200 leading-relaxed font-normal">
           {summary.executive_summary}
         </p>

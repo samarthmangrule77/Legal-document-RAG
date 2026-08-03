@@ -33,8 +33,22 @@ import { INITIAL_DOCUMENTS, INITIAL_CONVERSATIONS, INITIAL_ORGANIZATIONS, INITIA
 import { api } from './api/client';
 
 export const App: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('lexirag_theme');
+    return saved ? saved === 'dark' : true;
+  });
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
+
+  // Sync Dark/Light theme class to root <html> element
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('lexirag_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('lexirag_theme', 'light');
+    }
+  }, [darkMode]);
 
   // Real-Time WebSockets & Notifications State
   const [notifications, setNotifications] = useState<NotificationEvent[]>([]);
@@ -668,6 +682,7 @@ export const App: React.FC = () => {
               selectedDoc={selectedDoc}
               documents={filteredDocuments}
               onSelectDoc={setSelectedDoc}
+              onOpenPDFViewer={handleOpenPDFViewer}
             />
           )}
 
@@ -676,6 +691,7 @@ export const App: React.FC = () => {
               selectedDoc={selectedDoc}
               documents={filteredDocuments}
               onSelectDoc={setSelectedDoc}
+              onOpenPDFViewer={handleOpenPDFViewer}
             />
           )}
 

@@ -5,8 +5,7 @@
 @layer base {
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #0c0d12;
-    color: #e2e8f0;
+    @apply bg-slate-50 text-slate-900 dark:bg-[#0c0d12] dark:text-slate-100 transition-colors duration-150;
   }
   code, pre {
     font-family: 'JetBrains Mono', monospace;
@@ -15,29 +14,30 @@
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(148, 163, 184, 0.3);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.35);
+  background: rgba(148, 163, 184, 0.5);
 }
 
-/* Subtle background — no glows, no vignette */
+/* Background Utility */
 .bg-enterprise-saas {
-  background-color: #0c0d12;
+  @apply bg-slate-50 dark:bg-[#0c0d12];
 }
 
-/* Panel & Card base styles */
+/* Glass Panel Base Styles */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(226, 232, 240, 0.7);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(226, 232, 240, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .dark .glass-panel {
@@ -45,11 +45,13 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: none;
 }
 
+/* Glass Card Base Styles */
 .glass-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 1);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -63,17 +65,12 @@
 
 .glass-card:hover, .hover-lift:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .dark .glass-card:hover, .dark .hover-lift:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Subtle widget shadows */
-.floating-widget, .modal-shadow {
-  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.4);
 }
 
 /* Page transitions */

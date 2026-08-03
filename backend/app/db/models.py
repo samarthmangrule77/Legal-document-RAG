@@ -14,6 +14,17 @@ class Workspace(Base):
     plan = Column(String(50), default="Business Pro", nullable=False)
     storage_used_mb = Column(Float, default=50.0, nullable=False)
     max_storage_mb = Column(Float, default=10000.0, nullable=False)
+    brand_logo_url = Column(String(500), default="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=60", nullable=True)
+    ai_llm_model = Column(String(100), default="GPT-4o (OpenAI)", nullable=False)
+    embedding_model = Column(String(100), default="all-MiniLM-L6-v2 (384-dim)", nullable=False)
+    storage_provider = Column(String(100), default="Local Vector Vault (Encrypted)", nullable=False)
+    primary_language = Column(String(50), default="English 🇺🇸", nullable=False)
+    openai_api_key = Column(String(255), default="", nullable=True)
+    anthropic_api_key = Column(String(255), default="", nullable=True)
+    company_policy_rules = Column(Text, default="All indemnification clauses must be capped at 12 months total fees paid. Non-compete covenants must be limited to 6 months local territory. Notice period minimum is 30 calendar days.", nullable=True)
+    preferred_language = Column(String(50), default="English 🇺🇸", nullable=False)
+    explanation_style = Column(String(100), default="Executive TL;DR", nullable=False)
+    tone = Column(String(50), default="Professional & Direct", nullable=False)
 
     # Relationships
     teams = relationship("Team", back_populates="workspace", cascade="all, delete-orphan")
@@ -72,6 +83,15 @@ class Document(Base):
     is_scanned_ocr = Column(Boolean, default=False, nullable=False)
     content = Column(Text, nullable=True)
     upload_date_str = Column(String(100), nullable=True)
+
+    # Cloud Storage & Security Metadata
+    s3_bucket = Column(String(255), default="lexirag-documents", nullable=True)
+    s3_key = Column(String(500), nullable=True)
+    s3_version_id = Column(String(255), nullable=True)
+    encryption_type = Column(String(50), default="AES-256", nullable=False)
+    sha256_hash = Column(String(64), nullable=True)
+    mime_type = Column(String(100), default="application/pdf", nullable=True)
+    is_recovered = Column(Boolean, default=False, nullable=False)
 
     # Relationships
     workspace = relationship("Workspace", back_populates="documents")
@@ -181,6 +201,7 @@ class Subscription(Base):
     price_per_month = Column(Float, default=0.0, nullable=False)
     renews_at = Column(String(50), default="2026-08-27", nullable=True)
     stripe_customer_id = Column(String(100), default="cus_lexi99201", nullable=True)
+    stripe_subscription_id = Column(String(100), nullable=True)
 
     # Relationships
     workspace = relationship("Workspace", back_populates="subscription")

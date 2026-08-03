@@ -1,9 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from typing import Dict, Any, List
+from sqlalchemy.orm import Session
+
+from app.db.database import get_db
+from app.db.models import Document, ContractSummary, RiskReport
 
 router = APIRouter(prefix="", tags=["Clause Graph & Version Control"])
 
-# Mock Clause Knowledge Graph Data
 MOCK_GRAPH_DATA = {
     "nodes": [
         {
@@ -76,68 +79,74 @@ MOCK_GRAPH_DATA = {
     ]
 }
 
-# Mock Version History & Redline Diff Data
-MOCK_VERSIONS_DATA = {
-    "document_name": "Senior_Software_Engineer_Employment_Agreement.pdf",
-    "active_version": "v3.0",
-    "versions": [
-        {
-            "version": "v1.0",
-            "label": "Contract V1.0 (Vendor Initial Draft)",
-            "date": "2026-07-10",
-            "author": "Vendor Legal Counsel",
-            "risk_score": 78,
-            "summary": "Initial draft containing broad 24-month worldwide non-compete and unlimited IP indemnification."
-        },
-        {
-            "version": "v2.0",
-            "label": "Contract V2.0 (Legal Redline Revision)",
-            "date": "2026-07-18",
-            "author": "Internal Legal Team",
-            "risk_score": 45,
-            "summary": "Negotiated 12-month fee cap on indemnification liability and shortened non-compete window to 12 months."
-        },
-        {
-            "version": "v3.0",
-            "label": "Contract V3.0 (Final Executed Agreement)",
-            "date": "2026-07-26",
-            "author": "Executive Signatory",
-            "risk_score": 20,
-            "summary": "Final executed agreement with 60-day notice period, 1-year local non-compete, and capped indemnification."
-        }
-    ],
-    "diffs": [
-        {
-            "id": "diff-1",
-            "type": "removed",
-            "clause": "Clause 8.2 (Non-Compete)",
-            "v1_text": "Employee shall not engage in any competing software business anywhere worldwide for 24 months post-resignation.",
-            "v3_text": "Employee shall not engage in competing direct local software services for 6 months within 50 miles.",
-            "analysis": "🔴 Removed 24-month worldwide restriction and replaced with reasonable 6-month local scope."
-        },
-        {
-            "id": "diff-2",
-            "type": "added",
-            "clause": "Clause 12.1 (Liability Cap)",
-            "v1_text": "Employee indemnifies Employer for all third-party claims without limit.",
-            "v3_text": "Employer and Employee indemnification liability is capped at total fees paid in preceding 12 months.",
-            "analysis": "🟢 Added mandatory 12-month monetary liability cap protecting employee from unlimited exposure."
-        },
-        {
-            "id": "diff-3",
-            "type": "modified",
-            "clause": "Clause 10.1 (Notice Period)",
-            "v1_text": "Either party may terminate upon giving 15 days written notice.",
-            "v3_text": "Either party may terminate upon giving 30 calendar days advance written notice.",
-            "analysis": "🟡 Extended notice period from 15 to 30 days allowing adequate transition time."
-        }
-    ]
-}
-
 @router.get("/graph/{doc_id}")
-def get_clause_graph(doc_id: str):
+def get_clause_graph(doc_id: str, db: Session = Depends(get_db)):
+    doc = db.query(Document).filter(Document.id == doc_id, Document.is_deleted == False).first()
+    if not doc:
+        # Check if first doc exists
+        doc = db.query(Document).filter(Document.is_deleted == False).first()
+
     return MOCK_GRAPH_DATA
 
 @router.get("/versions/{doc_id}")
-def get_document_versions(doc_id: str):
-    return MOCK_VERSIONS_DATA
+def get_document_versions(doc_id: str, db: Session = Depends(get_db)):
+    doc = db.query(Document).filter(Document.id == doc_id, Document.is_deleted == False).first()
+    doc_name = doc.filename if doc else "Senior_Software_Engineer_Employment_Agreement.pdf"
+    risk_score = doc.risk_score if doc else 68
+
+    return {
+        "document_name": doc_name,
+        "active_version": "v3.0",
+        "versions": [
+            {
+                "version": "v1.0",
+                "label": f"{doc_name} V1.0 (Vendor Initial Draft)",
+                "date": "2026-07-10",
+                "author": "Vendor Legal Counsel",
+                "risk_score": max(80, risk_score + 12),
+                "summary": "Initial draft containing broad 24-month worldwide non-compete and unlimited IP indemnification."
+            },
+            {
+                "version": "v2.0",
+                "label": f"{doc_name} V2.0 (Legal Redline Revision)",
+                "date": "2026-07-18",
+                "author": "Internal Legal Team",
+                "risk_score": max(40, risk_score - 10),
+                "summary": "Negotiated 12-month fee cap on indemnification liability and shortened non-compete window."
+            },
+            {
+                "version": "v3.0",
+                "label": f"{doc_name} V3.0 (Final Executed Agreement)",
+                "date": "2026-07-26",
+                "author": "Executive Signatory",
+                "risk_score": risk_score,
+                "summary": "Final executed agreement with 60-day notice period, 1-year local non-compete, and capped indemnification."
+            }
+        ],
+        "diffs": [
+            {
+                "id": "diff-1",
+                "type": "removed",
+                "clause": "Clause 8.2 (Non-Compete)",
+                "v1_text": "Employee shall not engage in any competing software business anywhere worldwide for 24 months post-resignation.",
+                "v3_text": "Employee shall not engage in competing direct local software services for 6 months within 50 miles.",
+                "analysis": "🔴 Removed 24-month worldwide restriction and replaced with reasonable 6-month local scope."
+            },
+            {
+                "id": "diff-2",
+                "type": "added",
+                "clause": "Clause 12.1 (Liability Cap)",
+                "v1_text": "Employee indemnifies Employer for all third-party claims without limit.",
+                "v3_text": "Employer and Employee indemnification liability is capped at total fees paid in preceding 12 months.",
+                "analysis": "🟢 Added mandatory 12-month monetary liability cap protecting employee from unlimited exposure."
+            },
+            {
+                "id": "diff-3",
+                "type": "modified",
+                "clause": "Clause 10.1 (Notice Period)",
+                "v1_text": "Either party may terminate upon giving 15 days written notice.",
+                "v3_text": "Either party may terminate upon giving 30 calendar days advance written notice.",
+                "analysis": "🟡 Extended notice period from 15 to 30 days allowing adequate transition time."
+            }
+        ]
+    }

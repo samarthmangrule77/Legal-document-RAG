@@ -6,17 +6,27 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from app.config import settings
 
 # Create SQLAlchemy engine
-# SQLite fallback if PostgreSQL server is not active during local testing
+# Attempts PostgreSQL connection first; falls back to local SQLite if PostgreSQL server is inactive
 DATABASE_URL = settings.DATABASE_URL
+
 if "sqlite" in DATABASE_URL:
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 else:
-    engine = create_engine(
-        DATABASE_URL,
-        pool_pre_ping=True,
-        pool_size=10,
-        max_overflow=20
-    )
+    try:
+        temp_engine = create_engine(
+            DATABASE_URL,
+            pool_pre_ping=True,
+            pool_size=10,
+            max_overflow=20
+        )
+        with temp_engine.connect() as conn:
+            pass
+        engine = temp_engine
+    except Exception as e:
+        print(f"[Warning] PostgreSQL server unavailable at {DATABASE_URL}: {e}")
+        print("[Notice] Using local SQLite database engine for offline development/test execution.")
+        fallback_url = "sqlite:///./lexirag_local.db"
+        engine = create_engine(fallback_url, connect_args={"check_same_thread": False})
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

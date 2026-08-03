@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from app.config import settings
+from app.db.init_db import init_db
 from app.routes.auth_routes import router as auth_router
 from app.routes.doc_routes import router as doc_router
 from app.routes.chat_routes import router as chat_router
@@ -25,6 +26,10 @@ app = FastAPI(
     description="Enterprise AI Legal Document Assistant RAG API",
     version="1.0.0"
 )
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
 
 app.add_middleware(
     CORSMiddleware,

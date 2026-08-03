@@ -14,33 +14,47 @@ def init_db():
     db: Session = SessionLocal()
     try:
         # Check if default workspace exists
-        existing_org = db.query(Workspace).filter(Workspace.id == "org-nexus").first()
+        existing_org = db.query(Workspace).first()
         if not existing_org:
             print("Seeding initial PostgreSQL database with default data...")
 
             # 1. Workspace
+            ws_id = "11111111-1111-4111-8111-111111111111"
             workspace = Workspace(
-                id="org-nexus",
+                id=ws_id,
                 name="Nexus Corp Enterprise",
                 slug="nexus-corp",
                 plan="Business Pro",
                 storage_used_mb=50.0,
-                max_storage_mb=10000.0
+                max_storage_mb=10000.0,
+                brand_logo_url="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=60",
+                ai_llm_model="GPT-4o (OpenAI)",
+                embedding_model="all-MiniLM-L6-v2 (384-dim)",
+                storage_provider="Local Vector Vault (Encrypted)",
+                primary_language="English 🇺🇸",
+                openai_api_key="sk-proj-************************************",
+                anthropic_api_key="sk-ant-************************************",
+                company_policy_rules="All indemnification clauses must be capped at 12 months total fees paid. Non-compete covenants must be limited to 6 months local territory. Notice period minimum is 30 calendar days.",
+                preferred_language="English 🇺🇸",
+                explanation_style="Executive TL;DR",
+                tone="Professional & Direct"
             )
             db.add(workspace)
 
             # 2. Teams
+            team_legal_id = "22222222-2222-4222-8222-222222222221"
+            team_hr_id = "22222222-2222-4222-8222-222222222222"
             team_legal = Team(
-                id="team-legal",
-                workspace_id="org-nexus",
+                id=team_legal_id,
+                workspace_id=ws_id,
                 name="General Legal Contracts",
                 description="Default legal compliance scope",
                 color="brand",
                 document_count=3
             )
             team_hr = Team(
-                id="team-hr",
-                workspace_id="org-nexus",
+                id=team_hr_id,
+                workspace_id=ws_id,
                 name="HR & Employment",
                 description="Employment contracts & offer letters",
                 color="emerald",
@@ -49,14 +63,16 @@ def init_db():
             db.add_all([team_legal, team_hr])
 
             # 3. Users
+            u1_id = "33333333-3333-4333-8333-333333333331"
+            u2_id = "33333333-3333-4333-8333-333333333332"
             user_alex = User(
-                id="u-1",
-                workspace_id="org-nexus",
+                id=u1_id,
+                workspace_id=ws_id,
                 email="alex.rivera@nexuscorp.com",
                 name="Alex Rivera",
                 password_hash=get_password_hash("password123"),
                 role="owner",
-                active_org_id="org-nexus",
+                active_org_id=ws_id,
                 active_team_id="all",
                 job_title="Head of Legal & Compliance",
                 company_name="Nexus Corp",
@@ -64,13 +80,13 @@ def init_db():
                 auth_provider="local"
             )
             user_samarth = User(
-                id="u-2",
-                workspace_id="org-nexus",
+                id=u2_id,
+                workspace_id=ws_id,
                 email="samarth@nexuscorp.com",
                 name="Samarth Mangrule",
                 password_hash=get_password_hash("password123"),
                 role="admin",
-                active_org_id="org-nexus",
+                active_org_id=ws_id,
                 active_team_id="all",
                 job_title="Lead AI Engineer",
                 company_name="Nexus Corp",
@@ -80,11 +96,14 @@ def init_db():
             db.add_all([user_alex, user_samarth])
 
             # 4. Documents
+            doc1_id = "44444444-4444-4444-8444-444444444441"
+            doc2_id = "44444444-4444-4444-8444-444444444442"
+            doc3_id = "44444444-4444-4444-8444-444444444443"
             doc1 = Document(
-                id="doc-001",
-                workspace_id="org-nexus",
-                team_id="team-legal",
-                user_id="u-1",
+                id=doc1_id,
+                workspace_id=ws_id,
+                team_id=team_legal_id,
+                user_id=u1_id,
                 filename="Senior_Software_Engineer_Employment_Agreement.pdf",
                 file_type="pdf",
                 file_size_bytes=2516582,
@@ -94,13 +113,13 @@ def init_db():
                 risk_score=68,
                 is_scanned_ocr=False,
                 upload_date_str="2026-07-20 10:30",
-                content="Employment agreement between Nexus Corp and Employee..."
+                content="Employment agreement detailing full-time engineering duties, compensation, notice period, and non-compete covenants."
             )
             doc2 = Document(
-                id="doc-002",
-                workspace_id="org-nexus",
-                team_id="team-legal",
-                user_id="u-1",
+                id=doc2_id,
+                workspace_id=ws_id,
+                team_id=team_legal_id,
+                user_id=u1_id,
                 filename="Commercial_Office_Lease_Agreement_2026.pdf",
                 file_type="pdf",
                 file_size_bytes=4299161,
@@ -110,13 +129,13 @@ def init_db():
                 risk_score=42,
                 is_scanned_ocr=True,
                 upload_date_str="2026-07-22 14:15",
-                content="Lease agreement for commercial space at 500 Technology Way..."
+                content="Commercial property lease agreement for 12,000 sq ft office space with annual 3% escalations."
             )
             doc3 = Document(
-                id="doc-003",
-                workspace_id="org-nexus",
-                team_id="team-hr",
-                user_id="u-2",
+                id=doc3_id,
+                workspace_id=ws_id,
+                team_id=team_hr_id,
+                user_id=u2_id,
                 filename="SaaS_Enterprise_Master_Services_Agreement.docx",
                 file_type="docx",
                 file_size_bytes=1887436,
@@ -126,13 +145,14 @@ def init_db():
                 risk_score=25,
                 is_scanned_ocr=False,
                 upload_date_str="2026-07-24 16:40",
-                content="Master Services Agreement for enterprise cloud platform subscription..."
+                content="Master Services Agreement for enterprise cloud platform subscription."
             )
             db.add_all([doc1, doc2, doc3])
 
             # 5. Contract Summaries
             summary1 = ContractSummary(
-                document_id="doc-001",
+                id="55555555-5555-4555-8555-555555555551",
+                document_id=doc1_id,
                 executive_summary="Employment agreement detailing full-time engineering duties, baseline compensation, uncapped indemnification obligations, and 24-month non-compete covenants.",
                 parties=["Nexus Corp Inc. (Employer)", "Alex Rivera (Employee)"],
                 effective_date="August 1, 2026",
@@ -146,7 +166,8 @@ def init_db():
                 governing_law="State of California, USA"
             )
             summary2 = ContractSummary(
-                document_id="doc-002",
+                id="55555555-5555-4555-8555-555555555552",
+                document_id=doc2_id,
                 executive_summary="Commercial property lease agreement for 12,000 sq ft office space with annual 3% escalations and auto-renewal notice terms.",
                 parties=["Apex Real Estate Properties LLC (Landlord)", "Nexus Corp (Tenant)"],
                 effective_date="April 1, 2026",
@@ -163,7 +184,8 @@ def init_db():
 
             # 6. Risk Reports
             risk1 = RiskReport(
-                document_id="doc-001",
+                id="66666666-6666-4666-8666-666666666661",
+                document_id=doc1_id,
                 overall_risk_score=68,
                 risk_level="High",
                 flagged_clauses=[
@@ -184,7 +206,8 @@ def init_db():
                 ]
             )
             risk2 = RiskReport(
-                document_id="doc-002",
+                id="66666666-6666-4666-8666-666666666662",
+                document_id=doc2_id,
                 overall_risk_score=42,
                 risk_level="Medium",
                 flagged_clauses=[
@@ -200,34 +223,35 @@ def init_db():
             db.add_all([risk1, risk2])
 
             # 7. Chats & Messages
+            chat1_id = "77777777-7777-4777-8777-777777777771"
             chat1 = Chat(
-                id="conv-1",
-                workspace_id="org-nexus",
-                user_id="u-1",
+                id=chat1_id,
+                workspace_id=ws_id,
+                user_id=u1_id,
                 title="Employment Contract Notice & Non-Compete Review"
             )
             db.add(chat1)
 
             msg1 = Message(
-                id="m-1",
-                chat_id="conv-1",
+                id="88888888-8888-4888-8888-888888888881",
+                chat_id=chat1_id,
                 sender="user",
                 text="What is the required notice period for voluntary termination under the Senior Software Engineer Employment Agreement?",
                 timestamp_str="10:30 AM"
             )
             msg2 = Message(
-                id="m-2",
-                chat_id="conv-1",
+                id="88888888-8888-4888-8888-888888888882",
+                chat_id=chat1_id,
                 sender="ai",
                 text="According to Clause 8.1 of the Senior Software Engineer Employment Agreement, either party may terminate this agreement without cause by providing at least **30 calendar days advance written notice** to the other party.\n\nDuring the 30-day notice period, the employee remains obligated to fulfill standard duties and assist with handover responsibilities.",
                 timestamp_str="10:31 AM",
                 confidence_level="High",
                 summary="The required voluntary termination notice period is 30 calendar days written notice.",
                 beginner_version="You must give 30 days written notice before leaving your job.",
-                reasoning="1. Scanned FAISS index for 'termination notice period'.\n2. Found Clause 8.1 on Page 4 with 96% vector similarity score.\n3. Extracted exact 30 calendar days requirement.",
+                reasoning="1. Scanned vector index for 'termination notice period'.\n2. Found Clause 8.1 on Page 4 with 96% similarity score.\n3. Extracted exact 30 calendar days requirement.",
                 citations=[
                     {
-                        "doc_id": "doc-001",
+                        "doc_id": doc1_id,
                         "doc_name": "Senior_Software_Engineer_Employment_Agreement.pdf",
                         "page_number": 4,
                         "clause_number": "Clause 8.1",
@@ -248,9 +272,10 @@ def init_db():
             db.add_all([msg1, msg2])
 
             # 8. Subscription & Invoices
+            sub_id = "99999999-9999-4999-8999-999999999991"
             subscription = Subscription(
-                id="sub-1",
-                workspace_id="org-nexus",
+                id=sub_id,
+                workspace_id=ws_id,
                 plan_id="free",
                 plan_name="Free Plan",
                 pdf_limit=5,
@@ -264,8 +289,8 @@ def init_db():
             db.add(subscription)
 
             invoice1 = Invoice(
-                id="inv-1",
-                subscription_id="sub-1",
+                id="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+                subscription_id=sub_id,
                 invoice_number="inv_1092",
                 date_str="2026-07-01",
                 amount_str="$0.00",
@@ -278,9 +303,9 @@ def init_db():
             # 9. Audit Logs
             logs = [
                 AuditLog(
-                    id="audit-101",
-                    workspace_id="org-nexus",
-                    user_id="u-1",
+                    id="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1",
+                    workspace_id=ws_id,
+                    user_id=u1_id,
                     user_name="Alex Rivera",
                     user_email="alex.rivera@nexuscorp.com",
                     role="owner",
@@ -290,9 +315,9 @@ def init_db():
                     ip_address="192.168.1.45"
                 ),
                 AuditLog(
-                    id="audit-102",
-                    workspace_id="org-nexus",
-                    user_id="u-2",
+                    id="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2",
+                    workspace_id=ws_id,
+                    user_id=u2_id,
                     user_name="Samarth Mangrule",
                     user_email="samarth@nexuscorp.com",
                     role="admin",
